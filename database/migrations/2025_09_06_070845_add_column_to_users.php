@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->char('sexe')->after('name');
+            $table->char('sexe', 1)->after('name');
             $table->string('username')->after('email')->unique();
             $table->string('adresse')->nullable();
             $table->string('indicatif', 4)->nullable();
-            $table->string('telephone', 10)->nullable();
-            $table->string('telephone_secondaire', 10)->nullable();
+            $table->string('telephone', 15)->nullable();
+            $table->string('telephone_secondaire', 15)->nullable();
+            $table->boolean('responsable')->default(0); /* Definit si il est responsable ou pas */
         });
     }
 
@@ -33,6 +34,7 @@ return new class extends Migration
             $table->dropColumn('indicatif');
             $table->dropColumn('telephone');
             $table->dropColumn('telephone_secondaire');
+            $table->dropColumn('responsable');
         });
     }
 };

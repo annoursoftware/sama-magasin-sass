@@ -1,0 +1,379 @@
+@extends('back.master')
+
+@section('title', 'Catégories')
+
+@push('styles')
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('back/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('back/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('back/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+
+    <style>
+        input:not([type="file"]).error, textarea.error, select.error {
+            border: 1px solid red !important;
+        }
+
+        input:not([type="file"]).no-error, textarea.no-error, select.no-error {
+            border: 1px solid green !important;
+        }
+
+        div.error-field {
+            color: red;
+            font-size: small;
+        }
+    </style>
+@endpush
+
+@section('content')
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Catégorie</h1>    
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Tableau de bord</a></li>
+                            <li class="breadcrumb-item active">Catégories</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6 col-sm-6 col-12">
+                        <div class="info-box shadow-lg">
+                            <span class="info-box-icon bg-maroon"><i class="bi bi-boxes"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Catégories</span>
+                                <span class="info-box-number">{{ number_format($nb_categories, 0, ",",".") }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-12">
+                        <div class="info-box shadow-lg">
+                            <span class="info-box-icon bg-maroon"><i class="bi bi-box"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Articles</span>
+                                <span class="info-box-number">{{ number_format($nb_articles, 0, ",",".") }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+
+                    <div class="col-md-12 col-sm-12 col-12 d-flex">
+                        <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
+                            <i class="bi bi-plus-lg"></i> Ajouter une catégorie
+                        </button>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+
+                                <table id="table" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Catégorie</th>
+                                            <th>Produits</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Catégorie</th>
+                                            <th>Produits</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                            @include('back.categories.form')
+                            @include('back.categories.show')
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+
+        {{-- <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+            <i class="fas fa-chevron-up"></i>
+        </a> --}}
+    </div>
+    
+@endsection
+
+@push('scripts')
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('back/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('back/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+    <script>
+        var table = $('#table').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            /* paging: false,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: true,
+            responsive: true, */
+            ajax: "{{ route('categories.index') }}",
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'categorie', name: 'categorie'},
+                {data: 'total_articles', name: 'total_articles'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+            ],
+            "order": [[ 0, "desc" ]],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+            }
+        });
+
+        function add() {
+            /* alert('add'); */
+            $('#myModal').show();
+            $('#ajax-form').find(".print-error-msg").css('display', 'none');
+            $('#ajax-form').trigger("reset");
+            $('#btn-save').val("create-post");
+            $('#ajax-form').attr("action", "{{ route('categories.store') }}");
+            $('#formulaire-modal').find('.modal-title').text('Créer une nouvelle categorie');
+        }
+        
+        function addForm() {
+            save_method = 'add';
+            $('input[name_method]').val('POST');
+            $('#modal-form').modal('show');
+            $('#modal-form form')[0].reset();
+            $('.modal-title').text('Nouvelle Catégorie');
+            $('#id').val('');
+            $('#insertbtn').text(' Enregistrer');
+        }
+
+        let isSubmitting = false;
+        $('#formulaire').submit(function (e) {
+            e.preventDefault();
+            $('#insertbtn').html(' En cours...');
+            
+            /* const $submitButton = $(this).find('button[type="submit"]');
+            $submitButton.prop('disabled', true).text('Submitting...'); */
+            if (isSubmitting) {
+                return; // Prevent multiple submissions
+            }
+            isSubmitting = true;
+
+            /* var url = $(this).attr("action"); */
+            let formData = new FormData(this);
+
+            var id = $('#id').val();
+            if(save_method == 'add')
+            url = "{{ url('api/categories') }}";
+            else
+            url = "{{ url('api/categories') . '/' }}" + id;
+        
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: (response) => {
+                    $('#insertbtn').html('Enregistrement');
+                    $('#formulaire').trigger("reset");
+                    $('#modal-form').modal('hide');
+                    table.draw();
+                    /* table.ajax.reload(); */
+                },
+                error: function (response) {
+                    $('#formulaire').find(".print-error-msg").find("ul").html('');
+                    $('#formulaire').find(".print-error-msg").css('display', 'block');
+                    $.each(response.responseJSON.errors, function (key, value) {
+                        $('#formulaire').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                    });
+                },
+                complete: function() {
+                    isSubmitting = false; // Reset the flag
+                }
+            });
+        });
+
+        function showData(id){
+            alert(id);
+            $.ajax({
+                url: "{{ url('api/categories') }}" + "/" + id,
+                type: "GET",
+                dataType: "JSON",
+                success: function(row){
+                    $('#modal-show').modal('show');
+                    $('.modal-title-show').text('Visualisation Catégorie');
+
+                    $('#id-show').val(row.data.id);
+                    /* $('.info-box-number').html(data.role); */
+                    $('#categorie-show').val(row.data.categorie);
+                },
+                error: function(){
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        timerProgressBar: true,
+                        onOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Quelque chose ne va pas : (Code '+data.status+')'
+                    });
+                }
+            });
+        }
+
+        function editData(id){
+            alert(id);
+            save_method = 'edit';
+            $('input[name=_method]').val('PATCH');
+            /* $('#modal-form form')[0].reset(); */
+            $.ajax({
+                url: "{{ url('api/categories') }}" + '/' + id,
+                type: "GET",
+                dataType: "JSON",
+                success: function(row){
+                    var data = row.data;
+                    console.log(data);
+                    $('#modal-form').modal('show');
+                    $('.modal-title').text('Modification Catégorie');
+                    $('#insertbtn').text(' Modifier');
+
+                    $('#id').val(data.id);
+                    $('#categorie').val(data.categorie);
+                },
+                error: function(){
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        timerProgressBar: true,
+                        onOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Quelque chose ne va pas : (Code '+data.status+')'
+                    });
+                },
+
+            });
+        }
+
+        function deleteData(id) {
+            alert(id);
+            Swal.fire({
+                title: 'Etes vous sûr ?',
+                text: "Voulez-vous vraiment supprimer cette catégorie",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Supprimer !'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ url('api/categories') }}" + '/' + id,
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function(row){
+                            var data = row.data;
+                            console.log(data);
+                            var id = data.id
+                        },
+                        error: function(){
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 5000,
+                                timerProgressBar: true,
+                                onOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Quelque chose ne va pas : (Code '+data.status+')'
+                            });
+                        },
+
+                    });
+
+                    var token = $("meta[name='csrf-token']").attr("content");
+                    $.ajax(
+                    {
+                        url : "{{ url('api/categories') . '/' }}" + id,
+                        type: 'DELETE',
+                        data: {
+                            "id": id,
+                            "_token": token,
+                        },
+                        success: function (){
+                            Swal.fire(
+                                'Suppression !',
+                                'Catégorie supprimée avec succès.',
+                                'success'
+                            )
+                            table.draw();
+                        },
+                        error: function (data, textStatus, errorThrown) {
+                            console.log(data);
+                        },
+                    });
+
+                }
+            })
+        }
+    </script>
+@endpush

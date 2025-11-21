@@ -1,47 +1,40 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Reset Password') }}</div>
+        <div class="image-section">
+            <img src="https://s3-eu-central-1.amazonaws.com/glossika-blog/2021/10/oladimeji-odunsi-tUUmR82pq68-unsplash.jpg"
+                alt="African woman in headwrap">
+        </div>
+        <div class="login-section">
+            <div class="login-header">
+                <h2><i class="bi bi-send-check"></i> Réinitialisation du mot de passe</h2>
+            </div>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('password.email') }}">
-                        @csrf
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Send Password Reset Link') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+            @if (session('status'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('status') }}
                 </div>
+            @endif
+
+            <form id="login-form" method="POST" action="{{ route('password.email') }}">
+                @csrf
+                <div class="form-group">
+                    <label for="username">Identifiant</label>
+                    <input type="text" id="username" name="username" placeholder="email, telephone ou identifiant" value="{{ old('username') }}" class="@error('username') is-invalid @enderror" required autofocus />
+
+                    @error('username')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                <button type="submit" class="submit-btn">Envoyer le lien de réinitialisation</button>
+            </form>
+            <div class="create-account">
+                <a href="{{ route('login') }}">Retour à la connexion</a>
             </div>
         </div>
-    </div>
 </div>
 @endsection

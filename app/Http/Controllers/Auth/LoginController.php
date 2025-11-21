@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -37,4 +38,38 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+    
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        $login = request()->input('login'); // Assuming 'login' is the input field name
+
+        if (is_numeric($login) && strlen($login) >= 10) { // Basic phone number check
+            return 'phone_number'; // Assuming 'phone_number' column in users table
+        } elseif (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return 'email';
+        }
+
+        return 'username'; // Assuming 'username' column in users table
+    }
+
+    /**
+     * Get the credentials to be used for authentication.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function credentials(Request $request)
+    {
+        $field = $this->username();
+        return [
+            $field => $request->input('login'),
+            'password' => $request->input('password'),
+        ];
+    }
+
 }
