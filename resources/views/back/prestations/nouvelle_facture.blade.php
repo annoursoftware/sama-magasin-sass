@@ -38,7 +38,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Factures</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.prestations.prestations') }}">Factures</a></li>
                             <li class="breadcrumb-item active">Facture</li>
                         </ol>
                     </div>
@@ -133,10 +133,6 @@
                                                                             <select id="client" name="client_id" class="custom-select rounded-0 select"
                                                                                 required style="width: 100%;">
                                                                                 <option value="">****** Choix ******</option>
-                                                                                @php
-                                                                                    $clients = DB::table('clients')->get();
-                                                                                @endphp
-    
                                                                                 @foreach ($clients as $cli)
                                                                                 <option
                                                                                     value="{{ $cli->id }}">
@@ -193,7 +189,7 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12 col-sm-12 col-12 d-flex">
                                                                                 <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
-                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un client inexistant
+                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un client
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -229,9 +225,6 @@
                                                                                 class="custom-select rounded-0 select"
                                                                                 style="width: 100%;">
                                                                                 <option value="">**** Choix ****</option>
-                                                                                @php
-                                                                                    $activites = DB::table('activites')->get();
-                                                                                @endphp
     
                                                                                 @foreach ($activites as $a)
                                                                                 <option value="{{ $a->id }}">{{ $a->activite }}</option>

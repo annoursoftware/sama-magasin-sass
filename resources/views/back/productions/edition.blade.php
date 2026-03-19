@@ -1,6 +1,6 @@
 @extends('back.master')
 
-@section('title', 'Devis')
+@section('title', 'Production - Edition Production')
 
 @push('styles')
 
@@ -32,65 +32,19 @@
 
 @section('content')
 
-    @php
-        $clients = DB::table('clients')->get();
-
-        $vente = DB::table('ventes as v')
-            ->join('clients as cli', 'cli.id', 'v.client_id')
-            ->join('users as u', 'u.id', 'v.user_id')
-            ->select(
-                'v.id',
-                'v.num_vente',
-                'v.etat',
-                'v.montant',
-                'v.remise',
-                'v.created_at',
-                'client_id',
-                'status_vente',
-                'u.name',
-                'cli.client',
-                'cli.adresse',
-                'cli.telephone',
-            )
-            ->where('v.id', /* $id */ operator: 6)
-            ->first();
-
-        $ventes = DB::table('detail_ventes as dv')
-            ->join('ventes as v', 'v.id', 'dv.vente_id')
-            ->join('articles as a', 'a.id', 'dv.article_id')
-            ->select(
-                'dv.*',
-                'a.article'
-            )
-            ->where('v.id', /* $id */ 6)
-            ->get();
-
-
-        $nbre = DB::table('detail_ventes')->where('vente_id', /* $id */ 6)->count();
-
-        $montant = DB::table('detail_ventes')->where('vente_id', /* $id */ 6)->sum(DB::raw('montant*quantite'));
-        $mt_remise = $montant * ($vente->remise / 100);
-
-        $encaissement = DB::table('ventes as v')
-            ->join('encaissements as E', 'E.vente_id', 'v.id')
-            ->join('detail_encaissements as DE', 'DE.encaissement_id', 'E.id')
-            ->where('v.id', /* $id */ 6)
-            ->sum('DE.montant');
-    @endphp
-
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Administration de vente</h1>
+                        <h1>Administration de Production</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Ventes</a></li>
-                            <li class="breadcrumb-item active">Vente N°{{ $vente->num_vente }}</li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.productions.productions') }}">Productions</a></li>
+                            <li class="breadcrumb-item active">Production N°{{ $production->num_production }}</li>
                         </ol>
                     </div>
                 </div>
@@ -102,14 +56,14 @@
             <div class="container">
                 <div class="row">
 
-                    <input type="hidden" value="{{ $vente->id }}" name="id" id="id">
+                    <input type="hidden" value="{{ $production->id }}" name="id" id="id">
 
                     <div class="col-lg-4 col-12">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card card-maroon">
                                     <div class="card-header">
-                                        <h3 class="card-title">Vente</h3>
+                                        <h3 class="card-title">Production</h3>
                                     </div>
                                     <!-- /.card-header -->
 
@@ -117,15 +71,11 @@
                                         <div class="row">
                                             <div class="col-md-12 col-sm-12 col-12">
                                                 <div class="info-box">
-                                                    <span class="info-box-icon bg-maroon"><i
-                                                            class="bi bi-cart-plus-fill"></i></span>
+                                                    <span class="info-box-icon bg-maroon"><i class="bi bi-building-fill-gear"></i></span>
 
                                                     <div class="info-box-content">
-                                                        <span class="info-box-text">Vente N° {{ $vente->num_vente }}</span>
-                                                        <span class="info-box-number text-sm">Vente
-                                                            [{{ $vente->montant == $encaissement ? ' soldée' : ' non soldée' }}
-                                                            &
-                                                            {{ $vente->etat == 1 ? 'active' : 'annulée' }}]</span>
+                                                        <span class="info-box-text">Production N° {{ $production->num_production }}</span>
+                                                        <span class="info-box-number text-sm">Production [{{ $production->etat == 1 ? 'active' : 'annulée' }}]</span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -140,7 +90,7 @@
 
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Gestionnaire</span>
-                                                        <span class="info-box-number text-sm">{{ $vente->name }}</span>
+                                                        <span class="info-box-number text-sm">{{ $production->name }}</span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -156,7 +106,7 @@
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Date</span>
                                                         <span
-                                                            class="info-box-number text-sm">{{\Carbon\Carbon::parse($vente->created_at)->format('d/m/Y à H:i:s')}}</span>
+                                                            class="info-box-number text-sm">{{\Carbon\Carbon::parse($production->created_at)->format('d/m/Y à H:i:s')}}</span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -168,12 +118,12 @@
                                     <!-- /.card-body -->
 
                                     <div class="card-footer">
-                                        {{-- @if (Request::is('admin/*'))
+                                        @if (Request::is('admin/*'))
                                         <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
                                             <i class="fas fa-home"></i> Retour
                                         </a>
                                         @elseif (Request::is('dev/*'))
-                                        <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
+                                        <a href="{{ route('dev.productions.productions') }}" class="btn btn-primary float-left">
                                             <i class="fas fa-home"></i> Retour
                                         </a>
                                         @elseif (Request::is('vendeur/*'))
@@ -184,11 +134,7 @@
                                         <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
                                             <i class="fas fa-home"></i> Retour
                                         </a>
-                                        @endif --}}
-                                        <a href="{{ route('admin.transactions.ventes') }}"
-                                            class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
+                                        @endif
                                     </div>
 
                                     <!-- /.card-body -->
@@ -198,7 +144,7 @@
                             <div class="col-lg-12">
                                 <div class="card card-maroon">
                                     <div class="card-header">
-                                        <h3 class="card-title">Details Financiers</h3>
+                                        <h3 class="card-title">Ingrédients</h3>
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body">
@@ -207,10 +153,9 @@
                                                 <div class="info-box">
 
                                                     <div class="info-box-content">
-                                                        <span class="info-box-text">Vente</span>
+                                                        <span class="info-box-text">Nombre</span>
                                                         <span
-                                                            class="info-box-number text-sm">{{number_format(($montant), 0, ",", ".")}}
-                                                            FCFA</span>
+                                                            class="info-box-number text-sm">{{ number_format($productions->count(), 0, ',', '.') }}</span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -222,53 +167,9 @@
                                                 <div class="info-box">
 
                                                     <div class="info-box-content">
-                                                        <span class="info-box-text">Remise ({{ $vente->remise }}%)</span>
+                                                        <span class="info-box-text">Quantité</span>
                                                         <span
-                                                            class="info-box-number text-sm">{{number_format(($mt_remise), 0, ",", ".")}}
-                                                            FCFA</span>
-                                                    </div>
-                                                    <!-- /.info-box-content -->
-                                                </div>
-                                                <!-- /.info-box -->
-                                            </div>
-                                            <!-- /.col -->
-
-                                            {{-- <div class="col-md-4 col-sm-12 col-12">
-                                                <div class="info-box">
-
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Produits</span>
-                                                        <span class="info-box-number text-sm">{{ $nbre }}</span>
-                                                    </div>
-                                                    <!-- /.info-box-content -->
-                                                </div>
-                                                <!-- /.info-box -->
-                                            </div> --}}
-                                            <!-- /.col -->
-
-                                            <div class="col-md-6 col-sm-12 col-12">
-                                                <div class="info-box">
-
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Encaissements</span>
-                                                        <span
-                                                            class="info-box-number text-sm">{{number_format(($encaissement), 0, ",", ".")}}
-                                                            FCFA</span>
-                                                    </div>
-                                                    <!-- /.info-box-content -->
-                                                </div>
-                                                <!-- /.info-box -->
-                                            </div>
-                                            <!-- /.col -->
-
-                                            <div class="col-md-6 col-sm-12 col-12">
-                                                <div class="info-box">
-
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Restant</span>
-                                                        <span
-                                                            class="info-box-number text-sm">{{number_format((($montant - $mt_remise) - $encaissement), 0, ",", ".")}}
-                                                            FCFA</span>
+                                                            class="info-box-number text-sm">{{ number_format($productions->sum('quantite'), 0, ',', '.') }}</span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -287,19 +188,19 @@
                             <div class="col-lg-4 col-6">
                                 <div class="card card-maroon">
                                     <div class="card-header">
-                                        <h3 class="card-title">Etat Vente</h3>
+                                        <h3 class="card-title">Etat Production</h3>
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body">
                                         <div class="row">
-                                            @if ($vente->etat == 0)
+                                            @if ($production->etat == 0)
                                                 <div class="col-md-12 col-sm-12 col-12">
                                                     <div class="info-box">
                                                         {{-- <span class="info-box-icon bg-maroon"><i class="bi bi-person"></i></span> --}}
 
                                                         <div class="info-box-content">
                                                             <span class="info-box-text">Etat</span>
-                                                            <span class="info-box-number text-sm">Vente annulée</span>
+                                                            <span class="info-box-number text-sm">Production annulée</span>
                                                         </div>
                                                         <!-- /.info-box-content -->
                                                     </div>
@@ -326,12 +227,12 @@
                             <div class="col-lg-4 col-6">
                                 <div class="card card-maroon">
                                     <div class="card-header">
-                                        <h3 class="card-title">Statut Vente</h3>
+                                        <h3 class="card-title">Statut Production</h3>
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body">
                                         <div class="row">
-                                            @if ($vente->status_vente == 'f')
+                                            @if ($production->status_production == 'f')
                                                 <div class="col-md-12 col-sm-12 col-12">
                                                     <div class="info-box">
                                                         {{-- <span class="info-box-icon bg-maroon"><i class="bi bi-person"></i></span> --}}
@@ -362,25 +263,6 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-6">
-                                <div class="card card-maroon">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Remise de la vente</h3>
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label for="remise">Remise (%)</label>
-                                                    <input type="text" class="form-control rounded-0" id="remise" value="{{ $vente->remise }}" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="col-lg-12 col-md-6">
                                 <div class="card card-maroon">
                                     <div class="card-header">
@@ -394,13 +276,13 @@
                                                     <label for="client">Client</label>
                                                     <select id="client" name="client" class="custom-select" required>
                                                         <option value="">****** Choix ******</option>
-                                                        @foreach ($clients as $cli)
+                                                        {{-- @foreach ($clients as $cli)
                                                             @if ($cli->id == $vente->client_id)
                                                                 <option value="{{ $cli->id }}" selected>{{ $cli->client }}</option>
                                                             @else
                                                                 <option value="{{ $cli->id }}">{{ $cli->client }}</option>
                                                             @endif
-                                                        @endforeach
+                                                        @endforeach --}}
                                                     </select>
                                                 </div>
                                             </div>
@@ -408,14 +290,14 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="telephone">Téléphone</label>
-                                                    <input type="text" class="form-control rounded-0" id="telephone" value="{{ $vente->telephone }}" readonly />
+                                                    <input type="text" class="form-control rounded-0" id="telephone" value="{{-- {{ $vente->telephone }} --}}" readonly />
                                                 </div>
                                             </div>
                                             
                                             <div class="col-sm-5">
                                                 <div class="form-group">
                                                     <label for="adresse">Adresse</label>
-                                                    <input type="text" class="form-control rounded-0" id="adresse" value="{{ $vente->adresse }}" readonly />
+                                                    <input type="text" class="form-control rounded-0" id="adresse" value="{{-- {{ $vente->adresse }} --}}" readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -426,7 +308,7 @@
                             <div class="col-lg-12 mt-2">
                                 <div class="card card-maroon">
                                     <div class="card-header">
-                                        <h3 class="card-title">Details Vente</h3>
+                                        <h3 class="card-title">Details Production</h3>
                                     </div>
                                     <!-- /.card-header -->
                                     
@@ -435,7 +317,7 @@
                                         <div class="row mb-2">
                                             <div class="col-md-12 col-sm-12 col-12 d-flex">
                                                 <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
-                                                    <i class="bi bi-plus-lg"></i> Ajouter un article
+                                                    <i class="bi bi-plus-lg"></i> Ajouter un produit
                                                 </button>
                                             </div>
                                             
@@ -446,8 +328,7 @@
                                                         <thead style="background-color:rgb(243, 64, 118)">
                                                             <tr class="text-white">
                                                                 <th class="text-center" width="14%">#</th>
-                                                                <th width="45%">Article</th>
-                                                                <th class="text-center">Montant</th>
+                                                                <th width="45%">Produit</th>
                                                                 <th class="text-center" width="7%">Quantité</th>
                                                                 <th class="text-center">Sous total</th>
                                                             </tr>
@@ -455,23 +336,23 @@
                                                         
                                                         <tbody>
                                                             <?php $i = 0 ?>
-                                                            @foreach($ventes as $v)
+                                                            @foreach($productions as $p)
                                                             <?php $i++ ?>
                                                                 <tr class="text-xs">
-                                                                    @if ($vente->etat==1)
-                                                                        @if ($v->etat==1)
+                                                                    @if ($production->etat==1)
+                                                                        @if ($p->etat==1)
                                                                             <td class="text-center">
-                                                                                <button type="button" class="btn btn-outline-danger btn-sm deleteData" data-id="{{ $v->id }}">
+                                                                                <button type="button" class="btn btn-outline-danger btn-sm deleteData" data-id="{{ $p->id }}">
                                                                                     <span class="bi bi-trash3-fill" aria-hidden="true"></span>
                                                                                 </button>
                                                                                 /
-                                                                                <button type="button" class="btn btn-outline-primary btn-sm editData" data-id="{{ $v->id }}">
+                                                                                <button type="button" class="btn btn-outline-primary btn-sm editData" data-id="{{ $p->id }}">
                                                                                     <span class="bi bi-pencil-fill" aria-hidden="true"></span>
                                                                                 </button>
                                                                             </td>
                                                                         @else
                                                                             <td class="text-center">
-                                                                                <button type="button" class="btn btn-outline-primary btn-sm editData" data-id="{{ $v->id }}">
+                                                                                <button type="button" class="btn btn-outline-primary btn-sm editData" data-id="{{ $p->id }}">
                                                                                     <span class="bi bi-pencil-fill" aria-hidden="true"></span>
                                                                                 </button>
                                                                             </td>
@@ -481,27 +362,24 @@
                                                                     @endif
         
 
-                                                                    @if ($vente->etat==1)    
-                                                                        @if ($v->etat==1)
-                                                                            <td>{{ $v->article }}</td>
-                                                                            <td class="text-center">{{number_format($v->montant, 0, ",",".")}} FCFA</td>
-                                                                            <td class="text-center">{{ $v->quantite }}</td>
-                                                                            <td class="text-center">{{number_format($v->montant*$v->quantite, 0, ",",".")}} FCFA</td>
+                                                                    @if ($production->etat==1)    
+                                                                        @if ($p->etat==1)
+                                                                            <td>{{ $p->produit }}</td>
+                                                                            <td class="text-center">{{ $p->quantite }}</td>
+                                                                            <td class="text-center">{{ $p->quantite }}</td>
                                                                         @else
-                                                                            <td><strike>{{ $v->article }}</strike</td>
-                                                                            <td class="text-center"><strike>{{number_format($v->montant, 0, ",",".")}} FCFA</strike</td>
-                                                                            <td class="text-center"><strike>{{ $v->quantite }}</strike</td>
-                                                                            <td class="text-center"><strike>{{number_format($v->montant*$v->quantite, 0, ",",".")}} FCFA</strike</td>
+                                                                            <td><strike>{{ $p->produit }}</strike</td>
+                                                                            <td class="text-center"><strike>{{ $p->quantite }}</strike</td>
+                                                                            <td class="text-center"><strike>{{ $p->quantite }}</strike</td>
                                                                         @endif
                                                                     @else
-                                                                        <td><strike>{{ $v->article }}</strike</td>
-                                                                        <td class="text-center"><strike>{{number_format($v->montant, 0, ",",".")}} FCFA</strike</td>
-                                                                        <td class="text-center"><strike>{{ $v->quantite }}</strike</td>
-                                                                        <td class="text-center"><strike>{{number_format($v->montant*$v->quantite, 0, ",",".")}} FCFA</strike</td>
+                                                                        <td><strike>{{ $p->produit }}</strike</td>
+                                                                        <td class="text-center"><strike>{{ $p->quantite }}</strike</td>
+                                                                        <td class="text-center"><strike>{{ $p->quantite }}</strike</td>
                                                                     @endif
         
                                                                 </tr>
-                                                                @include('back.ventes.edit-article-detail-vente')
+                                                                @include('back.productions.edit-produit-detail-production')
                                                             @endforeach
                                                         </tbody>
         
@@ -509,7 +387,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @include('back.ventes.form')
+                                        @include('back.productions.form')
                                     </div>
                                     <!-- /.card-body -->
 

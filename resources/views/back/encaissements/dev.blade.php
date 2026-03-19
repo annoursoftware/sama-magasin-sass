@@ -195,7 +195,7 @@
         /***********************   Redirection vers la page visualisation  ******************************/
         function showData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/finances/encaissements/encaissement/visualisation/'+id;
+            var url = window.location.origin+'/dev/finances/encaissements/visualisation/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page visualisation  ******************************/
@@ -203,7 +203,7 @@
         /***********************   Redirection vers la page edition  ******************************/
         function editData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/finances/encaissements/encaissement/modification/'+id;
+            var url = window.location.origin+'/dev/finances/encaissements/modification/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page edition  ******************************/

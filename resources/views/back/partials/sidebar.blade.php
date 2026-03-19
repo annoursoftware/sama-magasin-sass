@@ -14,7 +14,7 @@
         <img src="{{ asset('femme.png') }}" class="img-circle elevation-2" alt="User Image">
       </div>
       <div class="info">
-        <a href="#" class="d-block">Ndeye Marie SOW</a>
+        <a href="#" class="d-block">{{ auth()->user()->name }}</a>
       </div>
     </div>
 
@@ -24,7 +24,7 @@
         <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
         <li class="nav-item">
-          <a href="{{ route('dev.dashboard') }}" class="nav-link {{ request()->is('admin') ? 'active':'' }}">
+          <a href="{{ route('dev.dashboard') }}" class="nav-link {{ request()->is('dev/dashboard') ? 'active':'' }}">
             <i class="nav-icon bi bi-speedometer"></i>
             <p>
               Tableau de bord
@@ -32,16 +32,9 @@
           </a>
         </li>
 
-        <li class="nav-item">
-          <a href="{{ route('admin.systemes.paiements') }}" class="nav-link {{ request()->is('admin/systemes-paiements') ? 'active':'' }}">
-            <i class="nav-icon bi bi-cash-coin"></i>
-            <p>Systémes de Paiement <span class="right badge badge-danger">{{ $nb_moyens_paiements }}</span></p>
-          </a>
-        </li>
-
         <li class="nav-header">INVENTAIRES</li>
-        <li class="nav-item {{ request()->is('admin/inventaires/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/inventaires/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/inventaires/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/inventaires/*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-basket-fill"></i>
             <p>
               Inventaires
@@ -50,22 +43,22 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.inventaires.categories') }}"
-                class="nav-link {{ request()->is('admin/inventaires/categories') ? 'active' : '' }}">
+              <a href="{{ route('dev.inventaires.categories') }}"
+                class="nav-link {{ request()->is('dev/inventaires/categories') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Catégories<span class="right badge badge-danger">{{ $nb_categories }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.inventaires.marques') }}"
-                class="nav-link {{ request()->is('admin/inventaires/marques') ? 'active' : '' }}">
+              <a href="{{ route('dev.inventaires.marques') }}"
+                class="nav-link {{ request()->is('dev/inventaires/marques') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Marques<span class="right badge badge-danger">{{ $nb_marques }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.inventaires.articles') }}"
-                class="nav-link {{ request()->is('admin/inventaires/articles') ? 'active' : '' }}">
+              <a href="{{ route('dev.inventaires.articles') }}"
+                class="nav-link {{ request()->is('dev/inventaires/articles') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Articles<span class="right badge badge-danger">{{ $nb_articles }}</span></p>
               </a>
@@ -96,14 +89,14 @@
         <li class="nav-header">RECETTES</li>
         
         <li class="nav-item">
-          <a href="{{ route('admin.transactions.clients') }}" class="nav-link {{ request()->is('admin/transactions/clients') ? 'active':'' }}">
+          <a href="{{ route('dev.transactions.clients') }}" class="nav-link {{ request()->is('dev/transactions/clients') ? 'active':'' }}">
             <i class="nav-icon bi bi-people"></i>
             <p> Clients <span class="right badge badge-danger">{{ $nb_clients }}</span></p>
           </a>
         </li>
 
-        <li class="nav-item {{ request()->is('admin/transactions/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/transactions/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/transactions/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/transactions/*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-cart-dash-fill"></i>
             <p>
               Ventes
@@ -111,39 +104,46 @@
             </p>
           </a>
           <ul class="nav nav-treeview">
-            {{-- <li class="nav-item">
-              <a href="{{ route('admin.transactions.clients') }}"
-                class="nav-link {{ request()->is('admin/transactions/clients') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Clients<span class="right badge badge-danger">{{ $nb_clients }}</span></p>
-              </a>
-            </li> --}}
             <li class="nav-item">
-              <a href="{{ route('admin.transactions.ventes.devis.nouveau') }}"
-                class="nav-link {{ request()->is('admin/transactions/ventes/devis/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.transactions.ventes.devis.nouveau') }}"
+                class="nav-link {{ request()->is('dev/transactions/ventes/devis/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Nouveau devis<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
+                <p>Nouveau devis</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.transactions.ventes.vente.nouveau') }}"
-                class="nav-link {{ request()->is('admin/transactions/ventes/vente/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.transactions.ventes.vente.nouveau') }}"
+                class="nav-link {{ request()->is('dev/transactions/ventes/vente/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Nouvelle vente<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
+                <p>Nouvelle vente</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.transactions.ventes') }}"
-                class="nav-link {{ request()->is('admin/transactions/ventes') ? 'active' : '' }}">
+              <a href="{{ route('dev.transactions.ventes') }}"
+                class="nav-link {{ request()->is('dev/transactions/ventes') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Ventes<span class="right badge badge-danger">{{ $nb_ventes }}</span></p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.transactions.ventes.operations') }}"
+                class="nav-link {{ request()->is('dev/transactions/ventes/operations') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Opérations<span class="right badge badge-danger">{{ $cumul_article_detail_ventes }}</span></p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.transactions.ventes.tracking-devis') }}"
+                class="nav-link {{ request()->is('dev/transactions/ventes/tracking-devis') ? 'active' : '' }}">
+                <i class="bi bi-binoculars-fill nav-icon"></i>
+                <p>Tracking<span class="right badge badge-danger">{{ $nb_devis }}</span></p>
               </a>
             </li>
           </ul>
         </li>
 
-        <li class="nav-item {{ request()->is('admin/prestations/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/prestations/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/prestations/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/prestations/*') ? 'active' : '' }}">
             <i class="bi bi-tools"></i>
             <p>
               Prestations
@@ -152,40 +152,53 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.prestations.activites') }}"
-                class="nav-link {{ request()->is('admin/prestations/activites') ? 'active' : '' }}">
+              <a href="{{ route('dev.prestations.activites') }}"
+                class="nav-link {{ request()->is('dev/prestations/activites') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Activités<span class="right badge badge-danger">{{ $nb_activites }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.prestations.devis.nouveau') }}"
-                class="nav-link {{ request()->is('admin/prestations/devis/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.prestations.devis.nouveau') }}"
+                class="nav-link {{ request()->is('dev/prestations/devis/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Nouveau devis<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.prestations.facture.nouveau') }}"
-                class="nav-link {{ request()->is('admin/prestations/facture/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.prestations.facture.nouveau') }}"
+                class="nav-link {{ request()->is('dev/prestations/facture/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Nouvelle facture<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.prestations.prestations') }}"
-                class="nav-link {{ request()->is('admin/prestations/prestations') ? 'active' : '' }}">
+              <a href="{{ route('dev.prestations.prestations') }}"
+                class="nav-link {{ request()->is('dev/prestations/prestations') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Prestations<span class="right badge badge-danger">{{ $nb_prestations }}</span></p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.prestations.operations') }}"
+                class="nav-link {{ request()->is('dev/prestations/operations') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Opérations<span class="right badge badge-danger">{{ $nb_detail_prestations }}</span></p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.prestations.prestations.tracking-devis') }}"
+                class="nav-link {{ request()->is('dev/prestations/prestations/tracking-devis') ? 'active' : '' }}">
+                <i class="bi bi-binoculars-fill nav-icon"></i>
+                <p>Tracking<span class="right badge badge-danger">{{ $nb_devis_prestations }}</span></p>
+              </a>
+            </li>
           </ul>
         </li>
-
         
         <li class="nav-header">DEPENSES</li>
-        <li class="nav-item {{ request()->is('admin/depenses/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/depenses/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/depenses/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/depenses/*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-cart-plus-fill"></i>
             <p>
               Achats
@@ -194,31 +207,37 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.depenses.achats.fournisseurs') }}"
-                class="nav-link {{ request()->is('admin/depenses/achats/fournisseurs') ? 'active' : '' }}">
+              <a href="{{ route('dev.depenses.achats.fournisseurs') }}"
+                class="nav-link {{ request()->is('dev/depenses/achats/fournisseurs') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Fournisseurs<span class="right badge badge-danger">{{ $nb_fournisseurs }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.depenses.achats.facture.nouveau') }}"
-                class="nav-link {{ request()->is('admin/depenses/achats/facture/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.depenses.achats.facture.nouveau') }}"
+                class="nav-link {{ request()->is('dev/depenses/achats/facture/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Nouvelle facture<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.depenses.achats.achats') }}"
-                class="nav-link {{ request()->is('admin/depenses/achats/achats') ? 'active' : '' }}">
+              <a href="{{ route('dev.depenses.achats.achats') }}"
+                class="nav-link {{ request()->is('dev/depenses/achats/achats') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Achats<span class="right badge badge-danger">{{ $nb_achats }}</span></p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.depenses.achats.operations') }}"
+                class="nav-link {{ request()->is('dev/depenses/achats/operations') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Opérations<span class="right badge badge-danger">{{ $nb_achats }}</span></p>
+              </a>
+            </li>
           </ul>
         </li>
-
-        <li class="nav-item {{ request()->is('admin/productions/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/productions/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/productions/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/productions/*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-cart-plus-fill"></i>
             <p>
               Productions
@@ -227,38 +246,45 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.productions.ingredients') }}"
-                class="nav-link {{ request()->is('admin/productions/ingredients') ? 'active' : '' }}">
+              <a href="{{ route('dev.productions.ingredients') }}"
+                class="nav-link {{ request()->is('dev/productions/ingredients') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Ingredients<span class="right badge badge-danger">{{ $nb_ingredients }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.productions.produits') }}"
-                class="nav-link {{ request()->is('admin/productions/produits') ? 'active' : '' }}">
+              <a href="{{ route('dev.productions.produits') }}"
+                class="nav-link {{ request()->is('dev/productions/produits') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Produits<span class="right badge badge-danger">{{ $nb_produits }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.productions.productions.facture.nouveau') }}"
-                class="nav-link {{ request()->is('admin/productions/productions/facture/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.productions.productions.nouveau') }}"
+                class="nav-link {{ request()->is('dev/productions/productions/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Nouvelle production<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.productions.productions') }}"
-                class="nav-link {{ request()->is('admin/productions/productions') ? 'active' : '' }}">
+              <a href="{{ route('dev.productions.productions') }}"
+                class="nav-link {{ request()->is('dev/productions/productions') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Productions<span class="right badge badge-danger">{{ $nb_productions }}</span></p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.productions.productions.operations') }}"
+                class="nav-link {{ request()->is('dev/productions/productions/operations') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Opérations<span class="right badge badge-danger">{{ $nb_productions }}</span></p>
               </a>
             </li>
           </ul>
         </li>
 
-        <li class="nav-item {{ request()->is('admin/autres-depenses/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/autres-depenses/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/autres-depenses/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/autres-depenses/*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-receipt"></i>
             <p>
               Dépenses
@@ -267,20 +293,20 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.autres-depenses.beneficiaires') }}" class="nav-link {{ request()->is('admin/autres-depenses/beneficiaires') ? 'active' : '' }}">
+              <a href="{{ route('dev.autres-depenses.beneficiaires') }}" class="nav-link {{ request()->is('dev/autres-depenses/beneficiaires') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Bénéficiaires <span class="right badge badge-danger">{{ $nb_beneficiaires }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.autres-depenses.depense.nouveau') }}"
-                class="nav-link {{ request()->is('admin/autres-depenses/depense/nouveau') ? 'active' : '' }}">
+              <a href="{{ route('dev.autres-depenses.depenses.nouveau') }}"
+                class="nav-link {{ request()->is('dev/autres-depenses/depenses/nouveau') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Nouvelle dépense<span class="right badge badge-danger">{{-- {{ $nb_ventes }} --}}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.autres-depenses.depenses') }}" class="nav-link {{ request()->is('admin/autres-depenses/depenses') ? 'active' : '' }}">
+              <a href="{{ route('dev.autres-depenses.depenses') }}" class="nav-link {{ request()->is('dev/autres-depenses/depenses') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Dépenses <span class="right badge badge-danger">{{ $nb_depenses }}</span></p>
               </a>
@@ -291,8 +317,14 @@
         
         <li class="nav-header">FINANCES</li>
         
-        <li class="nav-item {{ request()->is('admin/finances/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/finances/*') ? 'active' : '' }}">
+        <li class="nav-item">
+          <a href="{{ route('dev.systemes.paiements') }}" class="nav-link {{ request()->is('dev/systemes-paiements') ? 'active':'' }}">
+            <i class="nav-icon bi bi-cash-coin"></i>
+            <p>Systémes de Paie <span class="right badge badge-danger">{{ $nb_moyens_paiements }}</span></p>
+          </a>
+        </li>
+        <li class="nav-item {{ request()->is('dev/finances/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/finances/*') ? 'active' : '' }}">
             <i class="bi bi-cash-stack"></i>
             <p>
               Finances
@@ -301,31 +333,38 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.finances.encaissements') }}"
-                class="nav-link {{ request()->is('admin/finances/encaissements') ? 'active' : '' }}">
+              <a href="{{ route('dev.finances.encaissements') }}"
+                class="nav-link {{ request()->is('dev/finances/encaissements') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Encaissements<span class="right badge badge-danger">{{ $nb_encaissements }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.finances.decaissements') }}"
-                class="nav-link {{ request()->is('admin/finances/decaissements') ? 'active' : '' }}">
+              <a href="{{ route('dev.finances.decaissements') }}"
+                class="nav-link {{ request()->is('dev/finances/decaissements') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Decaissements<span class="right badge badge-danger">{{ $nb_encaissements }}</span></p>
+                <p>Decaissements<span class="right badge badge-danger">{{ $nb_decaissements }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.finances.encaissements') }}"
-                class="nav-link {{ request()->is('admin/finances/encaissements') ? 'active' : '' }}">
+              <a href="{{ route('dev.finances.recouvrements.creances') }}"
+                class="nav-link {{ request()->is('dev/finances/recouvrements/creances') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Créances<span class="right badge badge-danger">{{ $nb_encaissements }}</span></p>
+                <p>Créances<span class="right badge badge-danger">{{-- {{ $nb_creances }} --}}11</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.finances.encaissements') }}"
-                class="nav-link {{ request()->is('admin/finances/encaissements') ? 'active' : '' }}">
+              <a href="{{ route('dev.finances.recouvrements.dettes') }}"
+                class="nav-link {{ request()->is('dev/finances/recouvrements/dettes') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Dettes<span class="right badge badge-danger">{{ $nb_encaissements }}</span></p>
+                <p>Dettes<span class="right badge badge-danger">{{-- {{ $nb_dettes }} --}}11</span></p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('dev.finances.recouvrements.solde') }}"
+                class="nav-link {{ request()->is('dev/finances/recouvrements/solde') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Solde<span class="right badge badge-danger">{{-- {{ $nb_dettes }} --}}11</span></p>
               </a>
             </li>
           </ul>
@@ -395,36 +434,36 @@
         </li>
 
         <li class="nav-header">ACL</li>
-        <li class="nav-item {{ request()->is('admin/acl/*') ? ' menu-open' : '' }}">
-          <a href="#" class="nav-link {{ request()->is('admin/acl/*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->is('dev/acl/*') ? ' menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->is('dev/acl/*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-shield-shaded"></i>
             <p> ACL <i class="right fas fa-angle-left"></i></p>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('admin.acl.roles') }}"
-                class="nav-link {{ request()->is('admin/acl/roles') ? 'active' : '' }}">
+              <a href="{{ route('dev.acl.roles') }}"
+                class="nav-link {{ request()->is('dev/acl/roles') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Rôles<span class="right badge badge-danger">{{ $nb_roles }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.acl.entreprises') }}"
-                class="nav-link {{ request()->is('admin/acl/entreprises') ? 'active' : '' }}">
+              <a href="{{ route('dev.acl.entreprises') }}"
+                class="nav-link {{ request()->is('dev/acl/entreprises') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Entreprises<span class="right badge badge-danger">{{ $nb_entreprises }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.acl.boutiques') }}"
-                class="nav-link {{ request()->is('admin/acl/boutiques') ? 'active' : '' }}">
+              <a href="{{ route('dev.acl.boutiques') }}"
+                class="nav-link {{ request()->is('dev/acl/boutiques') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Boutiques<span class="right badge badge-danger">{{ $nb_boutiques }}</span></p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('admin.acl.utilisateurs') }}"
-                class="nav-link {{ request()->is('admin/acl/utilisateurs') ? 'active' : '' }}">
+              <a href="{{ route('dev.acl.utilisateurs') }}"
+                class="nav-link {{ request()->is('dev/acl/utilisateurs') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Utilisateurs<span class="right badge badge-danger">{{ $nb_users }}</span></p>
               </a>

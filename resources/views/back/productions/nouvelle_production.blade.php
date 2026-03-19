@@ -38,7 +38,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Productions</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.productions.productions') }}">Productions</a></li>
                             <li class="breadcrumb-item active">Production</li>
                         </ol>
                     </div>
@@ -89,9 +89,6 @@
                                                         <div class="col-md-10 col-sm-10 col-10">
                                                             <div class="form-group">
                                                                 <label for="pidproduit">Produits</label>
-                                                                @php
-                                                                    $produits = DB::table('produits')->get();
-                                                                @endphp
                                                                 <select name="pidproduit" id="produit" class="custom-select rounded-0 select"
                                                                     style="width: 100%;">
                                                                     <option value="">**** Choix ****</option>

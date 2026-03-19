@@ -12,6 +12,12 @@ class UserController extends Controller
     {
         $users = DB::table("users")->get();
         $boutiques = DB::table("boutiques")->get();
-        return view('back.roles.users', ['users'=> $users, 'boutiques'=>$boutiques]);
+        $roles = DB::table("roles")->get();
+        
+        return view('back.utilisateurs.dev', [
+            'users'=> $users, 
+            'boutiques'=>$boutiques,
+            'roles' => $roles
+        ]);
     }
 }

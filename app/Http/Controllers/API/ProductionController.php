@@ -62,6 +62,39 @@ class ProductionController extends Controller
             ->make(true);
         }
     }
+    
+    /**
+     * Display a listing of the resource.
+     */
+    public function operations(Request $request)
+    {
+        # code...
+        $query = DB::table('detail_productions as dp')
+            ->join('produits as prod','prod.id','=','dp.produit_id')
+            ->join('productions as p','p.id','=','dp.production_id')
+            ->join('users as u','u.id','=','p.user_id')
+            ->join('boutiques as b','b.id','=','p.boutique_id')
+            ->join('entreprises as entrep','entrep.id','=','b.entreprise_id')
+            ->select('dp.*', 'prod.produit', 'p.num_production', 'p.status_production', 'u.name', 'b.boutique', 'entrep.entreprise')
+            ->get();
+        /* dd($query); */
+        if ($request->ajax()) {    
+            return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn =  '<div class="btn-group">';
+                $btn .= '<button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>';
+                $btn .= '<div class="dropdown-menu" style="">';
+                $btn .= '<a onclick="showData('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-eye-fill"></i> Détails</a>';
+                $btn .= '</div>';
+                $btn .= '</div>';
+                
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
 
     /**
      * Store a newly created resource in storage.

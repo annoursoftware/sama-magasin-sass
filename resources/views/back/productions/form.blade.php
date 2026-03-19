@@ -12,7 +12,7 @@
             @csrf
             @method('POST')
 
-            <input type="hidden" value="{{ $vente->id }}" name="id" id="id">
+            <input type="hidden" value="{{ $production->id }}" name="id" id="id">
             
             <div class="row">
                 <div class="col-12">

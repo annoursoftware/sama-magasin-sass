@@ -181,7 +181,7 @@
                                             <i class="fas fa-home"></i> Retour
                                         </a>
                                         @endif --}}
-                                        <a href="{{ route('admin.prestations.prestations') }}"
+                                        <a href="{{ route('dev.prestations.prestations') }}"
                                             class="btn btn-primary float-left">
                                             <i class="fas fa-home"></i> Retour
                                         </a>

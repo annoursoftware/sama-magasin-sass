@@ -29,78 +29,6 @@
 
 @section('content')
 
-        @php
-            $query_1 = DB::table('decaissements as d')
-                ->join('achats as a', 'a.id', 'd.achat_id')
-                ->join('fournisseurs as f', 'f.id', 'a.fournisseur_id')
-                ->select(
-                    'd.id',
-                    'd.num_decaissement',
-                    'd.created_at',
-                    'a.num_achat as num_production',
-                    'a.montant',
-                    /* 'a.remise', */
-                    'a.created_at as date_etablissement',
-                    'f.fournisseur as beneficiaire',
-                    'f.telephone',
-                    'f.adresse'
-                );
-
-            $query_2 = DB::table('decaissements as d')
-                ->join('depenses as dep', 'dep.id', 'd.depense_id')
-                ->join('beneficiaires as b', 'b.id', 'dep.beneficiaire_id')
-                ->select(
-                    'd.id',
-                    'd.num_decaissement',
-                    'd.created_at',
-                    'dep.num_depense as num_production',
-                    'dep.montant',
-                    /* 'dep.remise', */
-                    'dep.created_at as date_etablissement',
-                    'b.beneficiaire as beneficiaire',
-                    'b.telephone',
-                    'b.adresse'
-                );
-
-            $decaissement = $query_1->union($query_2)
-                ->where('d.id', 4)
-                ->first();
-
-            $decaissements = DB::table('detail_decaissements as dd')
-                ->join('decaissements as d', 'd.id', 'dd.decaissement_id')
-                ->join('users as u', 'u.id', 'dd.user_id')
-                ->select('dd.id', 'dd.updated_at', 'dd.mode_decaissement', 'dd.ref_decaissement', 'dd.montant', 'u.name')
-                ->where('d.id', 4)
-                ->get();
-
-            /* Achat */
-            $achat = DB::table('decaissements as d')
-                ->join('achats as a', 'a.id', 'd.achat_id')
-                ->join('detail_achats as da', 'a.id', 'da.achat_id')
-                ->where('d.id', 4)
-                ->sum(DB::raw('da.montant*da.quantite'));
-
-            /* $requete_query_1 = $query_1->first();
-            $montant_remise_achat = $achat * ($requete_query_1->remise / 100);
-            $achat_apres_remise = $achat - $montant_remise_achat; */
-            /* Achat */
-
-            /* Depense */
-            $depense = DB::table('decaissements as d')
-                ->join('depenses as dep', 'dep.id', 'd.depense_id')
-                ->where('d.id', 4)
-                ->sum(DB::raw('dep.montant'));
-
-            /* $requete_query_2 = $query_2->first();
-            $montant_remise_depense = $depense * ($requete_query_2->remise / 100);
-            $depense_apres_remise = $depense - $montant_remise_depense; */
-            /* Depense */
-
-            /* dd($requete_query_1, $requete_query_2); */
-
-            $production = $achat + $depense;
-        @endphp
-
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
             <section class="content-header">
@@ -112,7 +40,7 @@
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('admin.finances.decaissements') }}">Décaissement</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('dev.finances.decaissements') }}">Décaissement</a></li>
                                 <li class="breadcrumb-item active">Décaissement N°{{ $decaissement->num_decaissement }}</li>
                             </ol>
                         </div>
@@ -224,33 +152,34 @@
                                         <!-- /.card-body -->
 
                                         <div class="card-footer">
-                                            {{-- @if (Request::is('admin/*'))
-                                                    <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
-                                                        <i class="fas fa-home"></i> Retour
-                                                    </a>
-                                                    @elseif (Request::is('dev/*'))
-                                                    <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                                        <i class="fas fa-home"></i> Retour
-                                                    </a>
-                                                    @elseif (Request::is('vendeur/*'))
-                                                    <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
-                                                        <i class="fas fa-home"></i> Retour
-                                                    </a>
-                                                    @else
-                                                    <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                                        <i class="fas fa-home"></i> Retour
-                                                    </a>
-                                                    @endif --}}
-                                            <a href="{{ route('admin.finances.decaissements') }}"
-                                                class="btn btn-primary float-left">
-                                                <i class="fas fa-home"></i> Retour
-                                            </a>
+                                            @if (Request::is('admin/*'))
+                                                <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
+                                                    <i class="fas fa-home"></i> Retour
+                                                </a>
+                                                @elseif (Request::is('dev/*'))
+                                                <a href="{{ route('dev.finances.decaissements') }}" class="btn btn-primary float-left">
+                                                    <i class="fas fa-home"></i> Retour
+                                                </a>
+                                                @elseif (Request::is('vendeur/*'))
+                                                <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
+                                                    <i class="fas fa-home"></i> Retour
+                                                </a>
+                                                @else
+                                                <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
+                                                    <i class="fas fa-home"></i> Retour
+                                                </a>
+                                                @endif
                                         </div>
 
                                         <!-- /.card-body -->
                                     </div>
                                 </div>
 
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8">
+                            <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card card-maroon">
                                         <div class="card-header">
@@ -259,7 +188,7 @@
                                         <!-- /.card-header -->
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-md-6 col-sm-12 col-12">
+                                                <div class="col-md-4 col-sm-12 col-12">
                                                     <div class="info-box">
 
                                                         <div class="info-box-content">
@@ -274,22 +203,7 @@
                                                 </div>
                                                 <!-- /.col -->
 
-                                                {{-- <div class="col-md-6 col-sm-12 col-12">
-                                                    <div class="info-box">
-
-                                                        <div class="info-box-content">
-                                                            <span class="info-box-text">Remise ({{ $prestation->remise }}%)</span>
-                                                            <span
-                                                                class="info-box-number text-sm">{{ number_format($mt_remise, 0, ',', '.') }}
-                                                                FCFA</span>
-                                                        </div>
-                                                        <!-- /.info-box-content -->
-                                                    </div>
-                                                    <!-- /.info-box -->
-                                                </div> --}}
-                                                <!-- /.col -->
-
-                                                <div class="col-md-6 col-sm-12 col-12">
+                                                <div class="col-md-4 col-sm-12 col-12">
                                                     <div class="info-box">
 
                                                         <div class="info-box-content">
@@ -305,7 +219,7 @@
                                                 </div>
                                                 <!-- /.col -->
 
-                                                <div class="col-md-12 col-sm-12 col-12">
+                                                <div class="col-md-4 col-sm-12 col-12">
                                                     <div class="info-box">
 
                                                         <div class="info-box-content">
@@ -323,11 +237,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-8">
-                            <div class="card card-maroon">
+                                <div class="col-lg-12">
+                                    <div class="card card-maroon">
                                 <div class="card-header">
                                     <h3 class="card-title">Details Decaissement</h3>
                                 </div>
@@ -363,7 +274,7 @@
                                                             @endforeach
                                                         @endif
                                                     </tbody>
-                                                    <tfoot>
+                                                    {{-- <tfoot>
                                                         <tr>
                                                             <td colspan="4" class="text-center">Décaissements</td>
                                                             <td><h6 id="sous_total">{{number_format($decaissements->sum('montant'), 0, ",",".")}} FCFA</h4></td>
@@ -381,13 +292,16 @@
                                                             <td><h6 id="sous_total">{{number_format($production-$decaissements->sum('montant'), 0, ",",".")}} FCFA</h4></td>
                                                         </tr>
 
-                                                    </tfoot>
+                                                    </tfoot> --}}
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>

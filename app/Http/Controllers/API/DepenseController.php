@@ -114,7 +114,7 @@ class DepenseController extends Controller
 
             $depense_actuel = DB::table('depenses')->where('num_depense', $code_depense)->first();
             
-            /*** Etapes d'encaissement de la depense ***/
+            /*** Etapes decaissement de la depense ***/
             $numero_decaissement = DB::table('decaissements')->max('num_decaissement');
             $numero_decaissement=="" || is_null($numero_decaissement) ? $numero_decaissement=str_pad(1, 5, "0", STR_PAD_LEFT) : $numero_decaissement=str_pad($numero_decaissement+1, 5, "0", STR_PAD_LEFT);
         
@@ -141,7 +141,7 @@ class DepenseController extends Controller
                     'updated_at' => Carbon::now(),
                 ]);
             }
-            /*** Etapes d'encaissement de la depense ***/
+            /*** Etapes decaissement de la depense ***/
             
             DB::commit();
             

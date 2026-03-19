@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('back/connexion/css/style.css') }}">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     
     <style>
         input:not([type="file"]).error, textarea.error, select.error {
@@ -30,6 +31,19 @@
             color: red;
             font-size: small;
         }
+
+        .print-error-msg ul {
+            list-style-type: square;
+            padding: 0;
+            margin: 5px 0 10px 20px;
+        }
+        .quote-danger {
+            border-left: 5px solid #dc3545;
+            background-color: #f8d7da;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
     </style>
     
     <title>Sama Magasin | LOGIN</title>
@@ -78,7 +92,7 @@
         </div>
     </div> --}}
     @yield('content')
-    <script>
+    {{-- <script>
         document.getElementById("login-form").addEventListener("submit", function (e) {
             e.preventDefault();
             // Add your login logic here
@@ -86,11 +100,12 @@
             const password = document.getElementById("password").value;
             console.log("Login attempted with:", { username, password });
         });
-    </script>
+    </script> --}}
     
     <!-- jQuery -->
     <script src="{{ asset('back/plugins/jquery/jquery.js') }}"></script>
     <script src="{{ asset('back/validation/jquery-simple-validator.min.js') }}"></script>
+    @stack('script')
 </body>
 
 </html>

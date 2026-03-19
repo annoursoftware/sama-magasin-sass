@@ -265,7 +265,7 @@
         /***********************   Redirection vers la page visualisation  ******************************/
         function showData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/prestations/prestation/visualisation/'+id;
+            var url = window.location.origin+'/dev/prestations/prestation/visualisation/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page visualisation  ******************************/
@@ -273,7 +273,7 @@
         /***********************   Redirection vers la page edition  ******************************/
         function editData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/prestations/prestation/modification/'+id;
+            var url = window.location.origin+'/dev/prestations/prestation/modification/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page edition  ******************************/
@@ -282,7 +282,7 @@
             alert(id);
             Swal.fire({
                 title: 'Etes vous sûr ?',
-                text: "Voulez-vous vraiment supprimer cet article ?",
+                text: "Voulez-vous vraiment annuler cette prestation ?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -291,7 +291,7 @@
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                        url: "{{ url('api/articles') }}" + '/' + id,
+                        url: "{{ url('api/prestations') }}" + '/' + id,
                         type: "GET",
                         dataType: "JSON",
                         success: function(row){
@@ -322,7 +322,7 @@
                     var token = $("meta[name='csrf-token']").attr("content");
                     $.ajax(
                     {
-                        url : "{{ url('api/articles') . '/' }}" + id,
+                        url : "{{ url('api/prestations') . '/' }}" + id,
                         type: 'DELETE',
                         data: {
                             "id": id,
@@ -331,7 +331,7 @@
                         success: function (){
                             Swal.fire(
                                 'Suppression !',
-                                'Transaction supprimée avec succès.',
+                                'Prestation annulée avec succès.',
                                 'success'
                             )
                             table.draw();

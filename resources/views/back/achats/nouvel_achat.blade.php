@@ -33,13 +33,13 @@
             <div class="container">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Vente</h1>
+                        <h1>Achat</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Ventes</a></li>
-                            <li class="breadcrumb-item active">Vente</li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.depenses.achats.achats') }}">Achats</a></li>
+                            <li class="breadcrumb-item active">Achat</li>
                         </ol>
                     </div>
                 </div>
@@ -133,14 +133,8 @@
                                                                             <select id="fournisseur" name="fournisseur_id" class="custom-select rounded-0 select"
                                                                                 required style="width: 100%;">
                                                                                 <option value="">****** Choix ******</option>
-                                                                                @php
-                                                                                    $fournisseurs = DB::table('fournisseurs')->get();
-                                                                                @endphp
-    
                                                                                 @foreach ($fournisseurs as $cli)
-                                                                                <option
-                                                                                    value="{{ $cli->id }}">
-                                                                                    {{ $cli->fournisseur }}</option>
+                                                                                    <option value="{{ $cli->id }}"> {{ $cli->fournisseur }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -193,7 +187,7 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12 col-sm-12 col-12 d-flex">
                                                                                 <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
-                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un Fournisseur inexistant
+                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un Fournisseur
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -225,16 +219,13 @@
                                                                     <div class="col-md-12 col-sm-12 col-12">
                                                                         <div class="form-group">
                                                                             <label for="pidproduit">Articles</label>
-                                                                            @php
-                                                                                $articles = DB::table('articles')->get();
-                                                                            @endphp
                                                                             <select name="pidproduit" id="article"
                                                                                 class="custom-select rounded-0 select"
                                                                                 style="width: 100%;">
                                                                                 <option value="">**** Choix ****</option>
                                                                                 
                                                                                 @foreach ($articles as $p)
-                                                                                <option value="{{ $p->id }}">{{ $p->article }}</option>
+                                                                                    <option value="{{ $p->id }}">{{ $p->article }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>

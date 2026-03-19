@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="row mb-2">
-                    <div class="col-md-6 col-sm-6 col-12">
+                    <div class="col-md-4 col-sm-6 col-12">
                         <div class="info-box shadow-lg">
                             <span class="info-box-icon bg-maroon"><i class="bi bi-cash-stack"></i></span>
 
@@ -45,7 +45,7 @@
                         </div>
                         <!-- /.info-box -->
                     </div>
-                    <div class="col-md-6 col-sm-6 col-12">
+                    <div class="col-md-4 col-sm-6 col-12">
                         <div class="info-box shadow-lg">
                             <span class="info-box-icon bg-maroon"><i class="bi bi-people"></i></span>
 
@@ -57,7 +57,20 @@
                         </div>
                         <!-- /.info-box -->
                     </div>
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box shadow-lg">
+                            <span class="info-box-icon bg-maroon"><i class="bi bi-cash-coin"></i></span>
 
+                            <div class="info-box-content">
+                                <span class="info-box-text">Décaissements</span>
+                                <span class="info-box-number">
+                                    {{ number_format($nb_decaissements, 0, ",",".") }} / {{ number_format($mt_decaissements, 0, ",",".") }}
+                                </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
                     {{-- <div class="col-md-12 col-sm-12 col-12 d-flex">
                         <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
                             <i class="bi bi-plus-lg"></i> Ajouter une dépense

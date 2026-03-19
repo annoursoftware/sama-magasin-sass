@@ -17,6 +17,44 @@
             color: red;
             font-size: small;
         }
+
+        .highlight { 
+            background-color: yellow; 
+            transition: background-color 1s ease; 
+        } 
+
+        .highlight-delete { 
+            background-color: #f8d7da; /* rouge clair */ 
+            transition: background-color 0.5s ease; 
+        }
+
+        .highlight-total { 
+            background-color: #d1ecf1; /* bleu clair */ 
+            padding: 5px; 
+            border-radius: 4px; t
+            ransition: background-color 0.8s ease; 
+        }
+
+        .pulse-total { 
+            animation: pulse 0.6s ease; 
+        }
+
+        @keyframes pulse { 
+            0% { transform: scale(1); color: #000; } 
+            50% { transform: scale(1.3); color: #28a745;  } 
+            100% { transform: scale(1); color: #000;  } 
+        }
+        
+        .btn-bounce { animation: bounce 0.8s; }
+
+        @keyframes bounce { 
+            0% { transform: scale(1); } 
+            30% { transform: scale(1.2); } 
+            50% { transform: scale(0.9); } 
+            70% { transform: scale(1.1); } 
+            100% { transform: scale(1); } 
+        }
+
     </style>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" />
@@ -38,7 +76,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Ventes</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.transactions.ventes') }}">Ventes</a></li>
                             <li class="breadcrumb-item active">Vente</li>
                         </ol>
                     </div>
@@ -133,14 +171,8 @@
                                                                             <select id="client" name="client_id" class="custom-select rounded-0 select"
                                                                                 required style="width: 100%;">
                                                                                 <option value="">****** Choix ******</option>
-                                                                                @php
-                                                                                    $clients = DB::table('clients')->get();
-                                                                                @endphp
-    
                                                                                 @foreach ($clients as $cli)
-                                                                                <option
-                                                                                    value="{{ $cli->id }}">
-                                                                                    {{ $cli->client }}</option>
+                                                                                    <option value="{{ $cli->id }}">{{ $cli->client }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -193,7 +225,7 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12 col-sm-12 col-12 d-flex">
                                                                                 <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
-                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un client inexistant
+                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un client
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -212,8 +244,7 @@
                                                 </div>
                                             </div>
     
-                                            <div id="detail-part" class="content" role="tabpanel"
-                                                aria-labelledby="detail-part-trigger">
+                                            <div id="detail-part" class="content" role="tabpanel" aria-labelledby="detail-part-trigger">
                                                 <div class="row mt-1">
                                                     <div class="col-sm-4">
                                                         <div class="card card-maroon">
@@ -225,16 +256,10 @@
                                                                     <div class="col-md-10 col-sm-10 col-10">
                                                                         <div class="form-group">
                                                                             <label for="pidproduit">Articles</label>
-                                                                            @php
-                                                                                $articles = DB::table('articles')->get();
-                                                                            @endphp
-                                                                            <select name="pidproduit" id="article"
-                                                                                class="custom-select rounded-0 select"
-                                                                                style="width: 100%;">
+                                                                            <select name="pidproduit" id="article" class="custom-select rounded-0 select" style="width: 100%;">
                                                                                 <option value="">**** Choix ****</option>
-                                                                                
                                                                                 @foreach ($articles as $p)
-                                                                                <option value="{{ $p->id }}">{{ $p->article }}</option>
+                                                                                    <option value="{{ $p->id }}">{{ $p->article }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -299,9 +324,7 @@
                                                                 <div class="row">
                                                                     <div class="col-sm-12">
                                                                         <div class="table-responsive">
-                                                                            <table
-                                                                                class="table table-striped table-bordered table-condensed table-hover mt-1"
-                                                                                id="details">
+                                                                            <table class="table table-striped table-bordered table-condensed table-hover mt-1" id="details">
                                                                                 <thead style="background-color:rgb(243, 64, 118)">
                                                                                     <tr class="text-white text-sm">
                                                                                         <th class="text-center" width="3%">Options
@@ -314,7 +337,7 @@
                                                                                     </tr>
                                                                                 </thead>
     
-                                                                                </tbody class="text-xs">
+                                                                                <tbody class="text-xs">
                                                                                 </tbody>
                                                                                 
                                                                             </table>
@@ -354,24 +377,20 @@
                                                                                 <div class="form-group">
                                                                                     <label for="sous_total">Sous total</label>
                                                                                     <h6 id="total">S/. 0.00</h6>
-                                                                                    <input type="hidden" class="form-control"
-                                                                                        name="montants" id="sous_total">
+                                                                                    <input type="hidden" class="form-control" name="montants" id="sous_total">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-sm-12 col-6">
                                                                                 <div class="form-group">
                                                                                     <label for="sous_total">Remise (%)</label>
-                                                                                    <input type="number" class="form-control rounded-0"
-                                                                                        name="remise" id="remise"
-                                                                                        placeholder="La Remise">
+                                                                                    <input type="number" class="form-control rounded-0" name="remise" id="remise" placeholder="La Remise">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-sm-12">
                                                                                 <div class="form-group">
                                                                                     <label for="total">Total</label>
                                                                                     <h6 id="total_def">S/. 0.00</h6>
-                                                                                    <input type="hidden" class="form-control"
-                                                                                        name="montants_apres_remise" id="total_def_val">
+                                                                                    <input type="hidden" class="form-control" name="montants_apres_remise" id="total_def_val">
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -380,19 +399,18 @@
                                                             </div>
                                                         </div>
                                                     </div>
-    
-                                                    <div class="col-sm-9">
+
+                                                    <div class="col-sm-9 mt-0">
                                                         <div class="card card-maroon">
                                                             <div class="card-header">
                                                                 <h3 class="card-title">Encaissement</h3>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="row">
-                                                                    <div class="col-sm-4 col-12">
+                                                                    <div class="col-sm-3 col-12">
                                                                         <div class="form-group">
                                                                             <label for="systeme_encaissement">Systeme Paie</label>
-                                                                            <select name="systeme_encaissement"
-                                                                                id="systeme_encaissement" class="custom-select rounded-0">
+                                                                            <select name="systeme_encaissement" id="systeme_encaissement" class="custom-select rounded-0">
                                                                                 <option value="">*** Choix ***</option>
                                                                                 <option value="mobile_money">Mobile money</option>
                                                                                 <option value="banque">Banque</option>
@@ -403,7 +421,7 @@
     
                                                                     <div class="col-sm-4 col-12">
                                                                         <div class="form-group">
-                                                                            <label for="mode_encaissement">Mode</label>
+                                                                            <label for="mode_encaissement">Lieu de Paie</label>
                                                                             <select name="mode_encaissement" id="mode_encaissement"
                                                                                 class="custom-select rounded-0">
                                                                                 <option value="">**** Choix ****</option>
@@ -411,7 +429,7 @@
                                                                         </div>
                                                                     </div>
     
-                                                                    <div class="col-sm-4" id="section_bank">
+                                                                    <div class="col-sm-2" id="section_bank">
                                                                         <div class="form-group">
                                                                             <label for="moyen_bancaire">Moyen Bancaire</label>
                                                                             <select name="moyen_bancaire" id="moyen_bancaire"
@@ -423,7 +441,7 @@
                                                                         </div>
                                                                     </div>
     
-                                                                    <div class="col-sm-4">
+                                                                    <div class="col-sm-3">
                                                                         <div class="form-group">
                                                                             <label for="ref_encaissement">Reference</label>
                                                                             <input type="text" class="form-control rounded-0"
@@ -431,7 +449,7 @@
                                                                         </div>
                                                                     </div>
     
-                                                                    <div class="col-sm-4">
+                                                                    <div class="col-sm-3">
                                                                         <div class="form-group">
                                                                             <label for="encaissement">Encaissement</label>
                                                                             <input type="text" class="form-control rounded-0"
@@ -439,13 +457,30 @@
                                                                         </div>
                                                                     </div>
                                                                     
-                                                                    <div class="col-sm-4">
+                                                                    <div class="col-sm-3">
                                                                         <div class="form-group">
                                                                             <label for="restant">Restant</label>
                                                                             <input type="text" class="form-control rounded-0"
                                                                                 id="restant" readonly />
                                                                         </div>
                                                                     </div>
+                                                                    
+                                                                    {{-- <div class="col-sm-3">
+                                                                        <div class="form-group">
+                                                                            <label for="montant_donne_par_le_client">Donné</label>
+                                                                            <input type="text" class="form-control rounded-0"
+                                                                                name="montant_donne_par_le_client" id="montant_donne_par_le_client" />
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="col-sm-3">
+                                                                        <div class="form-group">
+                                                                            <label for="rendu">Rendu</label>
+                                                                            <input type="text" class="form-control rounded-0"
+                                                                                id="rendu" readonly />
+                                                                        </div>
+                                                                    </div> --}}
+                                                                    
                                                                 </div>
                                                             </div>
                                                             
@@ -471,6 +506,17 @@
                                 <div class="card-footer justify-content-end">
                                     <button type="submit" class="btn btn-primary fas fa-save" id="savebtn"> Enregistrer</button>
                                 </div>
+
+                                {{-- <div class="card-footer justify-content-end"> 
+                                    <button type="submit" id="savebtn" class="btn btn-primary"> 
+                                        <span class="default-icon"> 
+                                            <i class="fas fa-save"></i> Enregistrer 
+                                        </span> 
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span> 
+                                        <span class="btn-text d-none">En cours...</span> 
+                                    </button> 
+                                </div> --}}
+
                             </div>
                         </div>
                     </div>
@@ -506,7 +552,7 @@
                 allowClear: false
             });
         });
-        
+
         $(document).on('click', '[data-toggle="lightbox"]', function(event) {
             event.preventDefault();
             $(this).ekkoLightbox();
@@ -521,42 +567,81 @@
         $('#systeme_encaissement').on('change', function(e){
             console.log(e);
 
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                onOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
             var systeme_encaissement = $('#systeme_encaissement').val();
             $.get('/api/json-moyens-paie?systeme_encaissement=' + systeme_encaissement,function(data) {
                 console.log(data);
                 if (systeme_encaissement=='espece') {
+
+                    /* alert('espece activé') */
                     
-                    alert('espece activé')
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: "Le mode espéce est activé", 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+                    
                     $('#mode_encaissement').empty();
                     $('#mode_encaissement').append('<option value="ESPECE">ESPECE</option>');
-                    
+
                     $("#ref_encaissement").attr("readonly", "true");
                     $("#ref_encaissement").val("ESPECE");
-                    
+
                     $("#lieu").attr("readonly", "true");
                     $("#lieu").val("CAISSE");
                     $("#section_bank").hide();
                 } else if(systeme_encaissement=='banque') {
+
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: "Le mode banque est activé", 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+
                     $('#mode_encaissement').empty();
                     $('#mode_encaissement').append('<option value="0" disable="true" selected="true">* ('+data.length+') Choix Chargées *</option>');
 
                     $.each(data, function(index, modObj){
                         $('#mode_encaissement').append('<option value="'+modObj.entite+'">'+ modObj.entite +'</option>');
                     })
-                    
+
                     $("#ref_encaissement").removeAttr("readonly", "true");
-                    $("#ref_encaissement").val();
+                    $("#ref_encaissement").val("");
                     $("#section_bank").show();
                 } else if(systeme_encaissement=='mobile_money') {
+
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: "Le mode mobile money est activé", 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+                    
                     $('#mode_encaissement').empty();
                     $('#mode_encaissement').append('<option value="0" disable="true" selected="true">* ('+data.length+') Choix Chargées *</option>');
 
                     $.each(data, function(index, modObj){
                         $('#mode_encaissement').append('<option value="'+modObj.entite+'">'+ modObj.entite +'</option>');
                     })
-                    
+
                     $("#ref_encaissement").removeAttr("readonly", "true");
-                    $("#ref_encaissement").val();
+                    $("#ref_encaissement").val("");
                     $("#section_bank").hide();
                 } else {
                     /* $('#mode_encaissement').empty();
@@ -568,7 +653,7 @@
                 }
             });
         });
-        
+
         $('#client').on('change', function(e){
             console.log(e);
             var client = $('#client').val()/* e.target.value */;
@@ -605,22 +690,6 @@
                 }
             });
         });
-          
-
-        /* $('#encaissement-part').hide();
-        function checkFactureDevis()
-        {
-            var type_vente = $('#type_vente').val()
-            if (type_vente=='d') {
-                $('#encaissement-part').hide();
-                alert('caché')
-            } else {
-                $('#encaissement-part').show();
-                alert('ouvert')
-            }
-        }
-        $("#type_vente").change(checkFactureDevis); */
-
 
         function addForm() {
             save_method = 'add';
@@ -631,28 +700,28 @@
             $('#id').val('');
             $('#nv_client').text(' Enregistrer');
         }
-        
+
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-number/2.1.6/jquery.number.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
 
+    {{-- <script src="{{ asset('back/transactions/ventes/ajout-article-into-details.js') }}"></script>
+    <script src="{{ asset('back/transactions/ventes/encaissement.js') }}"></script> --}}
+    {{-- <script src="{{ asset('back/transactions/ventes/nouvelle-vente.js') }}"></script> --}}
+
     <script>
-        
-        /**************** Details Facture ************************/
-        
         $(document).ready(function(){
             $("#btn_add").click(function(){
-              ajouter_une_ligne();
+                ajouter_une_ligne();
             });
         });
 
-        var cont = 0;
-        total = 0;
-        subtotal = [];
+        var cont = 0; 
+        var total = 0;
         $("#savebtn").hide();
 
-        function ajouter_une_ligne()
+        function ajouter_une_ligne_old()
         {
             var idproduit = $("#article").val();
             var produit = $("#article option:selected").text();
@@ -676,7 +745,7 @@
                             'La quantité ne doit pas etre vide ou negative',
                             'error'
                         )
-                        
+
                         /* Toast.fire({
                             icon: 'warning',
                             title: 'La quantité ne doit pas etre vide ou negative'
@@ -689,7 +758,7 @@
                                 'La quantité ne doit pas etre superieure au STOCK',
                                 'error'
                             )
-                            
+
                             /* Toast.fire({
                                 icon: 'warning',
                                 title: 'La quantité ne doit pas etre superieure au STOCK'
@@ -711,7 +780,7 @@
                             /* if ($.inArray(nouvelle_ligne, articleArray)===-1) {
                                 articleArray.push(nouvelle_ligne);
 
-                                
+
                             } else {
                                 Swal.fire(
                                     'Attention !',
@@ -719,7 +788,7 @@
                                     'warning'
                                 )
                             } */
-                            
+
                         }
                     }
                 } else {
@@ -729,7 +798,7 @@
                             'Le montant SAISI doit être superieur ou egal au montant minimum',
                             'error'
                         )
-                        
+
                         /* Toast.fire({
                             icon: 'warning',
                             title: 'Le montant SAISI doit être superieur ou egal au montant minimum'
@@ -741,7 +810,7 @@
                                 'La quantité ne doit pas etre vide ou negative',
                                 'error'
                             )
-                        
+
                             /* Toast.fire({
                                 icon: 'warning',
                                 title: 'La quantité ne doit pas etre vide ou negative'
@@ -759,7 +828,7 @@
                                     title: 'La quantité ne doit pas etre superieure au STOCK'
                                 }); */
                             } else {
-                                
+
                                 montant = montant_negocie;
 
                                 subtotal[cont] = (montant*quantite);
@@ -794,37 +863,214 @@
 
         }
 
+        function ajouter_une_ligne() {
+            var idproduit = $("#article").val();
+            var produit = $("#article option:selected").text();
+            var quantite = parseInt($("#pquantite").val()) || 0;
+            var stock = parseInt($("#pstock").val()) || 0;
+            var montant_init = parseFloat($("#pmontant").val()) || 0;   // prix défini
+            var montant_negocie_raw = $("#pchmontant").val();           // champ négociation brut
 
-        /********* 1.) Initialisation de la qte, du prix d'achat et du prix de vente à nulle **************/
-        function initialiser()
-        {
-            /* $("#pidproduit").val(""); */
+            // ✅ Gestion du prix négocié
+            var montant_negocie;
+            if (montant_negocie_raw === "" || isNaN(parseFloat(montant_negocie_raw))) {
+                montant_negocie = montant_init; // champ vide → prix défini
+            } else {
+                montant_negocie = parseFloat(montant_negocie_raw);
+                if (montant_negocie < montant_init) {
+                    Swal.fire(
+                        'Erreur !',
+                        'Le montant saisi ('+montant_negocie+') est inférieur au montant défini ('+montant_init+').',
+                        'error'
+                    );
+                    return; // ❌ on bloque
+                }
+            }
+
+            // ✅ Validation de la quantité par rapport au stock
+            if (quantite > stock) {
+                Swal.fire(
+                    'Erreur !',
+                    'La quantité saisie ('+quantite+') dépasse le stock disponible ('+stock+').',
+                    'error'
+                );
+                return; // ❌ on bloque
+            }
+
+            var montant = montant_negocie;
+
+            if (idproduit != "") {
+                var ligneExistante = $("#details tbody tr").filter(function() {
+                    return $(this).find("input[name='id_produit[]']").val() == idproduit;
+                });
+
+                if (ligneExistante.length > 0) {
+                    // 🔄 Fusionner les quantités
+                    var ancienneQuantite = parseInt(ligneExistante.find("input[name='quantite[]']").val()) || 0;
+                    var nouvelleQuantite = ancienneQuantite + quantite;
+
+                    if (nouvelleQuantite > stock) {
+                        Swal.fire(
+                            'Erreur !',
+                            'La quantité totale ('+nouvelleQuantite+') dépasse le stock disponible ('+stock+').',
+                            'error'
+                        );
+                        return;
+                    }
+
+                    // ✅ Mise à jour
+                    ligneExistante.find("input[name='quantite[]']").val(nouvelleQuantite);
+                    ligneExistante.find("td:eq(3)").html('<input type="hidden" name="quantite[]" value="'+nouvelleQuantite+'" />'+nouvelleQuantite);
+
+                    ligneExistante.find("input[name='montant[]']").val(montant);
+                    ligneExistante.find("td:eq(2)").html('<input type="hidden" name="montant[]" value="'+montant+'" />'+montant);
+
+                    var nouveauSousTotal = montant * nouvelleQuantite;
+                    ligneExistante.find("td:eq(4)").text(nouveauSousTotal);
+
+                    recalculerTotal();
+                    ligneExistante.addClass("highlight");
+                    setTimeout(function(){ ligneExistante.removeClass("highlight"); }, 1000);
+
+                    playSound("pop");
+                    Swal.fire({ 
+                        icon: 'info', 
+                        title: "Quantité mise à jour pour l'article : " + produit, 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+                } else {
+                    // ➕ Nouvelle ligne
+                    var sousTotal = montant * quantite;
+
+                    var nouvelle_ligne = $(`
+                        <tr class="selected" id="nouvelle_ligne${cont}" style="display:none;">
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="supprimer_ligne(${cont});">
+                                    <span class="fas fa-trash-alt" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                            <td><input type="hidden" name="id_produit[]" value="${idproduit}">${produit}</td>
+                            <td class="text-center"><input type="hidden" name="montant[]" value="${montant}" />${montant}</td>
+                            <td class="text-center"><input type="hidden" name="quantite[]" value="${quantite}" />${quantite}</td>
+                            <td class="text-center">${sousTotal}</td>
+                        </tr>
+                    `);
+
+                    cont++;
+                    initialiser();
+                    $("#details tbody").append(nouvelle_ligne);
+
+                    recalculerTotal();
+                    nouvelle_ligne.fadeIn(500).addClass("highlight");
+                    setTimeout(function(){ nouvelle_ligne.removeClass("highlight"); }, 1000);
+
+                    playSound("ding");
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: "Nouvel article ajouté : " + produit, 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+                }
+            } else {
+                Swal.fire('Attention !','Choisissez un article','warning');
+            }
+        }
+
+
+        function recalculerTotal() {
+            total = 0;
+            $("#details tbody tr").each(function() {
+                var montant = parseFloat($(this).find("input[name='montant[]']").val()) || 0;
+                var quantite = parseInt($(this).find("input[name='quantite[]']").val()) || 0;
+                var sousTotal = montant * quantite;
+
+                // ✅ Mettre à jour la cellule sous-total
+                $(this).find("td:eq(4)").text(sousTotal);
+
+                // ✅ Ajouter au total global
+                total += sousTotal;
+            });
+
+            // ✅ Mise à jour avec animation sur le total global
+            $("#total")
+                .hide() // on cache 
+                .html("Total/. " + total) // on met à jour 
+                .fadeIn(400) // effet fade-in
+                .addClass("pulse-total");
+            setTimeout(function(){ $("#total").removeClass("pulse-total"); }, 600);
+
+            $("#sous_total").val(total);
+            $("#a_payer").val(total);
+            evaluer();
+        }
+
+        function supprimer_ligne(index) {
+            var ligne = $("#nouvelle_ligne" + index);
+            // ✨ Highlight suppression
+            ligne.addClass("highlight-delete").fadeOut(500, function(){
+                $(this).remove();
+                recalculerTotal();
+            }); 
+            // setTimeout(function(){ ligne.remove(); recalculerTotal(); }, 500);
+
+            $("#remise").val("");
+            $("#encaissement").val(0);
+            $("#restant").val(0);
+
+            $("#total_def").html(total);
+            $("#total_def_val").val(total);
+
+            // 🔊 Son spécifique pour suppression
+            playSound("cash");
+
+        }
+
+        // 🎶 Fonction pour jouer différents sons 
+        function playSound(type) { 
+            let url; 
+            switch(type) { 
+                case "ding": 
+                    url = "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"; 
+                    break; 
+                case "pop": 
+                    url = "https://actions.google.com/sounds/v1/cartoon/pop.ogg"; 
+                    break; 
+                case "cash": 
+                    url = "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"; 
+                    break; 
+                default: 
+                    url = "https://actions.google.com/sounds/v1/foley/cash_register.ogg"; 
+            } 
+
+            var audio = new Audio(url); 
+            audio.volume = 0.9; // volume faible 
+            audio.play(); 
+        }
+
+        function initialiser() {
             $('#pidproduit').val("").trigger('change');
-            
             $("#pmontant").val(0);
             $("#pchmontant").val(0);
             $("#pquantite").val(0);
             $("#pstock").val(0);
-
             $("#remise").val('');
         }
 
-        /********* 2.) Evaluation du total avant envoie du formulaire **************/
-        function evaluer()
-        {
-            if(total > 0)
-            {
-                $("#savebtn").show();
-            }
-
-            else
-            {
+        function evaluer() {
+            if(total > 0) {
+                $("#savebtn").show().addClass("btn-bounce");
+                setTimeout(function(){ $("#savebtn").removeClass("btn-bounce"); }, 800);
+            } else {
                 $("#savebtn").hide();
             }
         }
 
-        function supprimer_ligne(index)
-        {
+
+        function supprimer_ligne_old(index) {
             total = total-subtotal[index];
             $("#total").html("S/. "+total);
             $("#nouvelle_ligne" + index).remove();
@@ -840,194 +1086,223 @@
             $("#total_def_val").val(total-(total*(remise/100)));
         }
 
-        $(function() {
-            $("#remise").keyup(function() {
-                sous_total = $("#sous_total").val();
-                remise = $("#remise").val();
-                
-                if (remise=="" || remise==0) {
-                    $("#total_def").html(sous_total);
-                    $("#total_def_val").val(sous_total);
-                    $("#encaissement").val(0);
-                    $("#restant").val(0);
-                } else if(remise<0) {
-                    Swal.fire(
-                        'Attention !',
-                        'La remise ne doit pas être négative',
-                        'danger'
-                    )
-                    $("#remise").val(0);
-                    $("#total_def").html(sous_total);
-                    $("#total_def_val").val(sous_total);
-                    $("#encaissement").val(0);
-                    $("#restant").val(0);
-                } else {
-                    $("#total_def").html(sous_total-(sous_total*(remise/100)));
-                    $("#total_def_val").val(sous_total-(sous_total*(remise/100)));
-                    $("#encaissement").val(0);
-                    $("#restant").val(0);
-                }
-            });
-
-            /* Gestion des encaissements */
-            $("#encaissement").blur(function() {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 5000,
-                    timerProgressBar: true,
-                    onOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                });
-                
-                var encaissement = $("#encaissement").val();
-                var sous_total = $("#sous_total").val();
-                var total_def_val = $("#total_def_val").val();
-
-                if (encaissement=="" || encaissement==0) {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: 'Ajoutez un encaissement'
-                    });
-                    $('#encaissement').focus();
-                    $('#encaissement').attr('required', true);
-                    $('#savebtn').attr('disabled', true);
-                } else {
-                    if (encaissement>total_def_val) {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "L'encaissement ne peut être pas être supérieur au montant facturé"
-                        });
-                        
-                        $('#savebtn').attr('disabled', true);
-                    } else {
-                        $('#savebtn').attr('disabled', false);
-                    }
-                }
-            });
-
-
-            $("#encaissement").keyup(function() {
-                var encaissement = $("#encaissement").val();
-                var sous_total = $("#sous_total").val();
-                var total_def_val = $("#total_def_val").val();
-                var remise = $("#remise").val();
-
-                if (remise==0) {
-                    $('#restant').val(sous_total-encaissement);
-                } else {
-                    $('#restant').val(total_def_val-encaissement);
-                }
-                
-            });
-        });
     </script>
-
+    
     <script>
-
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 8000,
+            timer: 5000,
             timerProgressBar: true,
-            /* onOpen: (toast) => {
+            onOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
-            } */
+            }
         });
-
-        let isSubmitting = false;
         
-        $('#formulaire').submit(function (e) {
-            e.preventDefault();
-            $('#nv_client').html(' En cours...');
+        $(function() {
+            /* function toNumber(val) {
+                return parseFloat(val) || 0;
+            } */   
             
-            /* const $submitButton = $(this).find('button[type="submit"]');
-            $submitButton.prop('disabled', true).text('Submitting...'); */
-            if (isSubmitting) {
-                return; // Prevent multiple submissions
+            function recalculerRestant() {
+                var total_def_val = parseFloat($("#total_def_val").val());
+                var encaissement = parseFloat($("#encaissement").val());
+                var restant = total_def_val - encaissement;
+                $("#restant").val(restant.toFixed(2));
+                $("#restant").css("color", restant < 0 ? "red" : "black");
             }
-            isSubmitting = true;
 
-            /* var url = $(this).attr("action"); */
-            let formData = new FormData(this);
+            /* Gestion des remises */
+            $("#remise").keyup(function() {
+                var sous_total = parseFloat($("#sous_total").val());
+                var remise = parseFloat($("#remise").val());
 
-            url = "{{ url('api/clients') }}";
-        
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: (response) => {
-                    $('#nv_client').html('Enregistrement');
-                    $('#formulaire').trigger("reset");
-                    $('#modal-form').modal('hide');
-                    window.location.reload();
-                },
-                error: function (response) {
-                    $('#formulaire').find(".print-error-msg").find("ul").html('');
-                    $('#formulaire').find(".print-error-msg").css('display', 'block');
-                    $.each(response.responseJSON.errors, function (key, value) {
-                        $('#formulaire').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
-                    });
-                },
-                complete: function() {
-                    isSubmitting = false; // Reset the flag
+                /* var total_def_val = parseFloat($("#total_def_val").val());
+                var encaissement = parseFloat($("#encaissement").val());
+                var restant = total_def_val - encaissement;
+
+                $("#restant").val(parseFloat(restant).toFixed(2));
+                $("#restant").css("color", restant < 0 ? "red" : "black"); */
+
+                if (isNaN(remise) || remise == "") {
+                    remise = 0;
+                }
+
+                if (remise < 0) {
+                    Swal.fire('Attention !','La remise ne doit pas être négative','error');
+                    remise = 0;
+                }
+
+                if (remise > 100) {
+                    Swal.fire('Attention !','La remise ne peut pas dépasser 100%','warning');
+                    remise = 100;
+                }
+
+                var total_def = sous_total - (sous_total * remise / 100);
+                $("#total_def").html(total_def.toFixed(2));
+                $("#total_def_val").val(total_def.toFixed(2));
+                $("#restant").val(total_def);
+            });
+            /* Gestion des remises */
+
+
+            /* Gestion des encaissements */
+            $("#encaissement").blur(function() {
+                var encaissement = parseFloat($("#encaissement").val());
+                var total_def_val = parseFloat($("#total_def_val").val());
+
+                if (encaissement <= 0) {
+                    Toast.fire({ icon: 'warning', title: 'Ajoutez un encaissement' });
+                    $('#encaissement').focus().attr('required', true);
+                    $('#savebtn').attr('disabled', true);
+                } else if (encaissement > total_def_val) {
+                    Toast.fire({ icon: 'warning', title: "L'encaissement ne peut pas dépasser le montant facturé" });
+                    $('#savebtn').attr('disabled', true);
+                } else {
+                    $('#savebtn').attr('disabled', false);
                 }
             });
-        });
 
-        $('#vente').submit(function (e) {
-            e.preventDefault();
-            $('#savebtn').html(' En cours...');
+            $("#encaissement").keyup(function() {
+                //recalculerRestant();
+                var total_def_val = parseFloat($("#total_def_val").val());
+                var encaissement = parseFloat($("#encaissement").val());
+                var restant = total_def_val - encaissement;
 
-            /* const $submitButton = $(this).find('button[type="submit"]');
-            $submitButton.prop('disabled', true).text('Submitting...'); */
-            if (isSubmitting) {
-                return; // Prevent multiple submissions
-            }
-            isSubmitting = true;
-
-            /* var url = $(this).attr("action"); */
-            let formData = new FormData(this);
-
-            url = "{{ url('api/ventes') }}";
-
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: (response) => {
-                    $('#savebtn').html('Enregistrement');
-                    $('#vente')[0].reset();
-                    var url = window.location.origin+'/admin/transactions/ventes/';
-                    window.open(url, '_self');
-
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Vente enregistrée avec succès !'
-                    });
-                },
-                error: function (response) {
-                    $('#vente').find(".print-error-msg").find("ul").html('');
-                    $('#vente').find(".print-error-msg").css('display', 'block');
-                    $.each(response.responseJSON.errors, function (key, value) {
-                        $('#vente').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
-                    });
-                },
-                complete: function() {
-                    isSubmitting = false; // Reset the flag
-                }
+                //$("#restant").val(restant.toFixed(2));
+                $("#restant").val(parseFloat(restant).toFixed(2));
+                $("#restant").css("color", restant < 0 ? "red" : "black");
             });
+            /* Gestion des encaissements */
         });
-
     </script>
+
+    {{-- Calcul de la remise --}}
+    {{-- 
+        <script>
+            $(function() {
+                $("#remise").keyup(function() {
+                    sous_total = $("#sous_total").val();
+                    remise = $("#remise").val();
+                    
+                    if (remise=="" || remise==0) {
+                        $("#total_def").html(sous_total);
+                        $("#total_def_val").val(sous_total);
+                    } else if(remise<0) {
+                        Swal.fire(
+                            'Attention !',
+                            'La remise ne doit pas être négative',
+                            'danger'
+                        )
+                        $("#remise").val(0);
+                        $("#total_def").html(sous_total);
+                        $("#total_def_val").val(sous_total);
+                    } else {
+                        $("#total_def").html(sous_total-(sous_total*(remise/100)));
+                        $("#total_def_val").val(sous_total-(sous_total*(remise/100)));
+                    }
+                });
+            });
+        </script> 
+    --}}
+    {{-- Calcul de la remise --}}
+
+
+    {{-- Soumission formulaire client et vente par AJAX --}}
+        <script>
+            let isSubmitting = false;
+
+            $('#formulaire').submit(function (e) {
+                e.preventDefault();
+                $('#nv_client').html(' En cours...');
+
+                /* const $submitButton = $(this).find('button[type="submit"]');
+                $submitButton.prop('disabled', true).text('Submitting...'); */
+                if (isSubmitting) {
+                    return; // Prevent multiple submissions
+                }
+                isSubmitting = true;
+
+                /* var url = $(this).attr("action"); */
+                let formData = new FormData(this);
+
+                url = "{{ url('api/clients') }}";
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: (response) => {
+                        $('#nv_client').html('Enregistrement');
+                        $('#formulaire').trigger("reset");
+                        $('#modal-form').modal('hide');
+                        window.location.reload();
+                    },
+                    error: function (response) {
+                        $('#formulaire').find(".print-error-msg").find("ul").html('');
+                        $('#formulaire').find(".print-error-msg").css('display', 'block');
+                        $.each(response.responseJSON.errors, function (key, value) {
+                            $('#formulaire').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                        });
+                    },
+                    complete: function () {
+                        isSubmitting = false; // Reset the flag
+                    }
+                });
+            });
+
+
+            $('#vente').submit(function (e) {
+                e.preventDefault();
+                $('#savebtn').html(" <i class='bi bi-database-fill-gear'></i>"+" En cours d'enregistrement...");
+
+                /* const $submitButton = $(this).find('button[type="submit"]');
+                $submitButton.prop('disabled', true).text('Submitting...'); */
+                if (isSubmitting) {
+                    return; // Prevent multiple submissions
+                }
+                isSubmitting = true;
+
+                /* var url = $(this).attr("action"); */
+                let formData = new FormData(this);
+
+                url = "{{ url('api/ventes') }}";
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: (response) => {
+                        $('#savebtn').html('Enregistrement');
+                        /* $('#vente').trigger("reset"); */
+                        $('#vente')[0].reset();
+                        var url2 = window.location.origin + '/dev/transactions/ventes/';
+                        window.open(url2, '_self');
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Facture enregistrée avec succès !'
+                        });
+                    },
+                    error: function (response) {
+                        $('#vente').find(".print-error-msg").find("ul").html('');
+                        $('#vente').find(".print-error-msg").css('display', 'block');
+                        $.each(response.responseJSON.errors, function (key, value) {
+                            $('#vente').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                        });
+                    },
+                    complete: function () {
+                        isSubmitting = false; // Reset the flag
+                    }
+                });
+            });
+
+        </script>
+    {{-- Soumission formulaire client et vente par AJAX --}}
 @endpush

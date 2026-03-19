@@ -4,6 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\Beneficiaire;
+use App\Models\Decaissement;
+use App\Models\Depense;
+use App\Models\DetailEncaissement;
+use App\Models\DetailPrestation;
+use App\Models\Encaissement;
+use App\Models\Prestation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +66,80 @@ class PrestationController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
+        }
+    }
+    
+    /**
+     * Display a listing of the resource.
+     */
+    public function operations(Request $request)
+    {
+        # code...
+        $query = DB::table('taches as t')
+            ->join('activites as a', 'a.id', '=', 't.activite_id')
+            ->join('prestations as p', 'p.id', '=', 't.prestation_id')
+            ->join('clients as c', 'c.id', '=', 'p.client_id')
+            ->join('users as u', 'u.id', '=', 'p.user_id')
+            ->join('boutiques as b', 'b.id', '=', 'p.boutique_id')
+            ->join('entreprises as entrep','entrep.id','=','b.entreprise_id')
+            ->select('t.*', 'a.activite', 'p.code_prestation', 'p.status_prestation', 'c.client', 'b.boutique', 'entrep.entreprise')
+            ->get();
+        /* dd($query); */
+        if ($request->ajax()) {
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn =  '<div class="btn-group">';
+                    $btn .= '<button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>';
+                    $btn .= '<div class="dropdown-menu" style="">';
+                    $btn .= '<a onclick="showData('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-eye-fill"></i> Détails</a>';
+                    $btn .= '</div>';
+                    $btn .= '</div>';
+                    
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+    
+    /**
+     * Display a listing of the resource.
+     */
+    public function tracking(Request $request)
+    {
+        # code...
+        $query = DB::table('prestations as p')
+            ->join('clients as c','c.id','=','p.client_id')
+            ->join('users as u','u.id','=','p.user_id')
+            ->join('boutiques as b','b.id','=','p.boutique_id')
+            ->join('entreprises as entrep','entrep.id','=','b.entreprise_id')
+            ->select('p.*', 'c.client', 'u.name as gestionnaire', 'b.boutique', 'entrep.entreprise')
+            ->where('status_prestation', 'd')
+            ->get();
+        /* dd($query); */
+        if ($request->ajax()) {    
+            return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                # code...
+                    $btn =  '<div class="btn-group">';
+                    $btn .= '<button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>';
+                    $btn .= '<div class="dropdown-menu" style="">';
+                    $btn .= '<a onclick="impression('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-printer-fill"></i> Impression</a>';
+                    $btn .= '<a onclick="showData('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-eye-fill"></i> Détails</a>';
+                    $btn .= '<a onclick="editData('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-pencil-fill"></i> Edition</a>';
+                    if ($row->etat==1) {
+                        # code...
+                        $btn .= '<a onclick="deleteData('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-x-circle-fill"></i> Annuler</a>';
+                    }
+                    $btn .= '</div>';
+                    $btn .= '</div>';
+                
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
         }
     }
 
@@ -229,6 +310,111 @@ class PrestationController extends Controller
             ]);
 
         return response()->json(['success' => 'Statut prestation modifié avec succès !']);
+    }
+    
+    /* Annulation de la prestation ou du devis */
+    public function annulation_prestation(string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            /************** Debut Prestation *******************/
+            $prestation = Prestation::findOrFail($id);
+            $prestation->etat = 0;
+            $prestation->update();
+            /************** Fin Prestation *******************/
+
+            /************** Debut Section Detail_Prestation *******************/
+            if ($prestation->status_prestation=='f') {
+                # code...
+                $detail_prestations = DB::table('detail_prestations')->where('prestation_id', $prestation->id)->get();
+
+                $lignes_encaissements = DB::table('detail_encaissements as d')
+                    ->join('encaissements as e', 'd.encaissement_id', 'e.id')
+                    ->where('e.prestation_id', $prestation->id)
+                    ->get();
+                $encaissement = DB::table('encaissements')->where('prestation_id', $prestation->id)->first();
+                
+                /* En cas de detection de ligne de prestations existants */
+                foreach ($detail_prestations as $d) {
+                    /* Retour au stock */
+                    $produit = Article::find($d->article_id);
+                    $produit->increment('stock', $d->quantite);
+
+                    /* desactivation lignes prestations */
+                    $ligne = DetailPrestation::find($d->id);
+                    $ligne->etat = 0;
+                    $ligne->update();
+                }
+
+                /* Desactivation des encaissements */
+                if (($lignes_encaissements->count()) > 0) {
+                    /* Desactivation des encaissements */
+                    $encaissement = Encaissement::find($encaissement->id);
+                    $encaissement->etat = 0;
+                    $encaissement->update();
+
+                    # code...
+                    foreach ($lignes_encaissements as $le) {
+                        $d_encaissement = DetailEncaissement::find($le->id);
+                        $d_encaissement->etat = 0;
+                        $d_encaissement->update();
+                    }
+                }
+
+                /* Creation d'une depense sous forme de ristourne */  
+                $client = DB::table('clients')->where('id', $prestation->client_id)->first();
+                $beneficiaire = DB::table('beneficiaires')->where('beneficiaire', $client->client)->first();
+                if (is_null($beneficiaire)) {
+                    # code...
+                    $nv_benef = new Beneficiaire();
+                    $nv_benef->beneficiaire = $client->client;
+                    $nv_benef->adresse = $client->adresse;
+                    $nv_benef->telephone = $client->telephone;
+                    //$nv_benef->client_id = $client->id;
+                    $nv_benef->save();
+                }
+
+                $code_depense = DB::table('depenses')->max('num_depense');
+                $code_depense=="" || is_null($code_depense) ? $code_depense=str_pad(1, 6, "0", STR_PAD_LEFT) : $code_depense=str_pad($code_depense+1, 6, "0", STR_PAD_LEFT);
+                
+                $depense = new Depense();
+                $depense->num_depense = $code_depense;
+                $depense->libelle = 'Ristourne prestation N°'.$prestation->num_prestation;
+                $depense->numero_facture_benef = 'Prest N°'.$prestation->num_prestation;
+                $depense->montant = ($prestation->montant - ($prestation->montant * ($prestation->remise / 100)));
+                $depense->type = 'dir';
+                $depense->effet = Carbon::now();
+                $depense->limite = Carbon::now();
+                $depense->boutique_id = $prestation->boutique_id;
+                $depense->beneficiaire_id = $beneficiaire ? $beneficiaire->id : $nv_benef->id;
+                $depense->user_id = 1;
+                $depense->save();
+
+                /*** Etapes decaissement de la depense ***/
+                $numero_decaissement = DB::table('decaissements')->max('num_decaissement');
+                $numero_decaissement=="" || is_null($numero_decaissement) ? $numero_decaissement=str_pad(1, 5, "0", STR_PAD_LEFT) : $numero_decaissement=str_pad($numero_decaissement+1, 5, "0", STR_PAD_LEFT);
+            
+                $decaissement = new Decaissement();
+                $decaissement->num_decaissement = $numero_decaissement;
+                /* $decaissement->etat = 1; */
+                /* $decaissement->user_id = $request->user_id; */
+                $decaissement->depense_id = $depense->id;
+                $decaissement->save();
+            }
+            
+            /************** Fin Section Detail_Prestation *******************/
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
 
     public function ajout_activites_into_taches(Request $request, string $id)

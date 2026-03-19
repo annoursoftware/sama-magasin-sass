@@ -8,7 +8,7 @@
           </button>
         </div>
 
-        <form id="formulaire" class="form-horizontal" method="POST" action="{{ url('api/users') }}" validate="true">
+        <form id="formulaire" class="form-horizontal" method="POST" action="{{ url('api/boutiques') }}" validate="true">
             @csrf
             @method('POST')
 
@@ -64,13 +64,9 @@
                           <label for="entreprise">Entreprise</label>
                           <select class="custom-select rounded-0" id="boutique" name="boutique_id">
                             <option>*** Choix ***</option>
-                            @php
-                                $entreprises = DB::table('entreprises')->get();
-                            @endphp
                             @foreach ($entreprises as $e)
                             <option value="{{ $e->id }}">{{ $e->entreprise }}</option>
                             @endforeach
-                            {{-- <option value="f">Femme</option> --}}
                           </select>
                         </div>
                     </div>

@@ -284,7 +284,7 @@
                 }
             });
         });
-
+        
         function showData(id){
             $.ajax({
                 url: "{{ url('api/articles') }}" + "/" + id,

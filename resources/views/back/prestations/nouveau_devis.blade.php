@@ -38,7 +38,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.prestations.prestations') }}">Prestations</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.prestations.prestations') }}">Prestations</a></li>
                             <li class="breadcrumb-item active">Devis</li>
                         </ol>
                     </div>
@@ -118,9 +118,6 @@
                                                                     <div class="col-sm-8">
                                                                         <div class="form-group">
                                                                             <label for="client">Client</label>
-                                                                            @php
-                                                                                $clients = DB::table('clients')->get();
-                                                                            @endphp
                                                                             <select id="client" name="client_id" class="custom-select rounded-0 select"
                                                                                 required style="width: 100%;">
                                                                                 <option value="">****** Choix ******</option>
@@ -219,9 +216,6 @@
                                                                                 class="custom-select rounded-0 select"
                                                                                 style="width: 100%;">
                                                                                 <option value="">**** Choix ****</option>
-                                                                                @php
-                                                                                    $activites = DB::table('activites')->get();
-                                                                                @endphp
     
                                                                                 @foreach ($activites as $a)
                                                                                 <option value="{{ $a->id }}">{{ $a->activite }}</option>

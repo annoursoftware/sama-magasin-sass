@@ -10,13 +10,10 @@ class EncaissementController extends Controller
 {
     public function index() 
     {
-        $categories = DB::table('categories')->get();
-        $marques = DB::table('marques')->get();
-        $boutiques = DB::table('boutiques')->get();
-        return view('back.achats.dev', ['categories'=> $categories, 'marques'=>$marques, 'boutiques'=>$boutiques]);
+        return view('back.encaissements.dev');
     }
 
-    public function details() 
+    public function details($id) 
     {
         $query_1 = DB::table('encaissements as e')
             ->join('ventes as v', 'v.id', 'e.vente_id')
@@ -36,7 +33,7 @@ class EncaissementController extends Controller
                 'c.telephone',
                 'C.adresse'
             )
-            ->where('e.id', operator: 4)
+            ->where('e.id', $id)
             ->first();
 
         $query_2 = DB::table('encaissements as e')
@@ -57,7 +54,7 @@ class EncaissementController extends Controller
                 'c.telephone',
                 'c.adresse',
             )
-            ->where('e.id', operator: 4)
+            ->where('e.id', $id)
             ->first();
             
         if (is_null($query_1)) {
@@ -68,7 +65,7 @@ class EncaissementController extends Controller
             $prestation = DB::table('encaissements as e')
                 ->join('prestations as p', 'p.id', 'e.prestation_id')
                 ->join('taches as t', 'p.id', 't.prestation_id')
-                ->where('E.id', 4)
+                ->where('e.id', $id)
                 ->sum(DB::raw('t.montant'));
                 
             $montant_remise_prestation = $prestation * ($encaissement->remise / 100);
@@ -107,7 +104,7 @@ class EncaissementController extends Controller
         ]);
     }
 
-    public function edition() 
+    public function edition($id) 
     {
         $query_1 = DB::table('encaissements as e')
             ->join('ventes as v', 'v.id', 'e.vente_id')

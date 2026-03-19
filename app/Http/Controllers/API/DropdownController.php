@@ -15,6 +15,13 @@ class DropdownController extends Controller
         return response()->json($moyens);
     }
     
+    public function boutiques_dune_entreprise(Request $request)
+    {
+        $entreprise = $request->entreprise;
+        $boutiques = DB::table('boutiques')->where('entreprise_id', $entreprise)->get();
+        return response()->json($boutiques);
+    }
+
     public function infos_client(Request $request)
     {
         $client = $request->id;

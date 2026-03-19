@@ -22,11 +22,6 @@
                 </div>
             </div>
 
-            @php
-                $roles = DB::table('roles')->get();
-                $boutiques = DB::table('boutiques')->get();
-            @endphp
-
             <div class="modal-body">
                 <div class="row mt-4">
                     <div class="col-sm-8">

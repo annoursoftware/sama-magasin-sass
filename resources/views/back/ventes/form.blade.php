@@ -8,11 +8,11 @@
           </button>
         </div>
 
-        <form id="vente" class="form-horizontal" method="POST" action="{{ url('api/users') }}" validate="true">
+        <form id="formulaire" class="form-horizontal" method="POST" action="{{ url('api/ventes') }}" validate="true">
             @csrf
             @method('POST')
 
-            <input type="hidden" value="{{ $vente->id }}" name="id" id="id">
+            <input type="text" value="{{ $vente->id }}" name="vente_id" id="vente_id">
             
             <div class="row">
                 <div class="col-12">
@@ -36,9 +36,6 @@
                               <label for="pidproduit">Articles</label><br>
                               <select name="pidproduit" id="article" class="custom-select rounded-0 select" style="width: 100%;">
                                 <option value="">**** Choix ****</option>
-                                @php
-                                  $articles = DB::table('articles')->get();
-                                @endphp
                 
                                 @foreach ($articles as $p)
                                   <option value="{{ $p->id }}">{{ $p->article }}</option>
@@ -107,19 +104,16 @@
                               <table class="table table-striped table-bordered table-condensed table-hover mt-1" id="details">
                                 <thead style="background-color:rgb(243, 64, 118)">
                                   <tr class="text-white text-sm">
-                                    <th class="text-center" width="3%">Options
-                                    </th>
+                                    <th class="text-center" width="3%">Options</th>
                                     <th width="50%">Articles</th>
-                                    <th class="text-center" width="15%">Montant
-                                    </th>
+                                    <th class="text-center" width="15%">Montant</th>
                                     <th class="text-center">Quantité</th>
                                     <th class="text-center">Total</th>
                                   </tr>
                                 </thead>
-                
-                                </tbody class="text-xs">
-                                </tbody>
-                
+                                
+                                </tbody class="text-xs"></tbody>
+                                
                               </table>
                             </div>
                           </div>
@@ -162,7 +156,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-danger fas fa-times-circle" data-dismiss="modal"> Fermer</button>
-                <button type="submit" class="btn btn-outline-primary bi bi-floppy-fill" id="savebtn"> </button>
+                <button type="submit" class="btn btn-outline-primary" id="savebtn"><i class="bi bi-floppy-fill"></i> Ajouter</button>
             </div>
         </form>
       </div>

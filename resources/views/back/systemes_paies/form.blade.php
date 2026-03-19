@@ -31,9 +31,6 @@
                             <option value="">*** Choix ***</option>
                             <option value="mobile_money">Mobile Money</option>
                             <option value="banque">Banque</option>
-                            @php
-                              $nombre_espece = DB::table('moyens_paiements')->where('systeme', 'espece')->count();
-                            @endphp
                             @if ($nombre_espece>0)
                             
                             @else

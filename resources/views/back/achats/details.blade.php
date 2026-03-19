@@ -1,6 +1,6 @@
 @extends('back.master')
 
-@section('title', 'Devis')
+@section('title', 'Détails Achat N°'.$achat->num_achat)
 
 @push('styles')
     <style>
@@ -31,40 +31,6 @@
 
 @section('content')
 
-        @php
-
-            $achat = DB::table('achats as a')
-                ->join('fournisseurs as f', 'f.id', 'a.fournisseur_id')
-                ->join('users as u', 'u.id', 'a.user_id')
-                ->select(
-                    'a.*',
-                    'u.name',
-                    'f.fournisseur',
-                    'f.adresse',
-                    'f.telephone as telephone_primaire',
-                )
-                ->where('a.id', /* $id */ 4)
-                ->first();
-
-            $achats = DB::table('detail_achats as da')
-                ->join('achats as a', 'a.id', 'da.achat_id')
-                ->join('articles as art', 'art.id', 'da.article_id')
-                ->select('da.*', 'art.article')
-                ->where('a.id', /* $id */ 4)
-                ->get();
-
-            $nbre = DB::table('detail_achats')->where('achat_id', /* $id */ 4)->count();
-
-            $montant = DB::table('detail_achats')->where('achat_id', /* $id */ 4)->sum(DB::raw('montant*quantite'));
-            $mt_remise = $montant * ($achat->remise / 100);
-
-            $decaissement = DB::table('achats as a')
-                ->join('decaissements as d', 'd.achat_id', 'a.id')
-                ->join('detail_decaissements as dd', 'dd.decaissement_id', 'd.id')
-                ->where('a.id', /* $id */ 4)
-                ->sum('dd.montant');
-        @endphp
-
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -76,7 +42,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Achats</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.depenses.achats.achats') }}">Achats</a></li>
                             <li class="breadcrumb-item active">Achat N°{{ $achat->num_achat }}</li>
                         </ol>
                     </div>
@@ -159,27 +125,23 @@
                                     <!-- /.card-body -->
 
                                     <div class="card-footer">
-                                        {{-- @if (Request::is('admin/*'))
-                                                <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @elseif (Request::is('dev/*'))
-                                                <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @elseif (Request::is('vendeur/*'))
-                                                <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @else
-                                                <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @endif --}}
-                                        <a href="{{ route('admin.depenses.achats.achats') }}"
-                                            class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
+                                        @if (Request::is('admin/*'))
+                                            <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                        @elseif (Request::is('dev/*'))
+                                            <a href="{{ route('dev.depenses.achats.achats') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                        @elseif (Request::is('vendeur/*'))
+                                            <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                        @else
+                                            <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                        @endif
                                     </div>
 
                                     <!-- /.card-body -->

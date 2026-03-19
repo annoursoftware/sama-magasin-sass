@@ -104,9 +104,9 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <h3 class="card-title">DataTable with minimal features & hover style</h3>
-                            </div>
+                            </div> --}}
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="table" class="table table-bordered table-hover">
@@ -316,7 +316,13 @@
                     $('#insertbtn').text(' Modifier');
 
                     $('#id').val(data.id);
-                    $('#role').val(data.role);
+                    $('#name').val(data.name);
+                    $('#sexe').val(data.sexe);
+                    $('#email').val(data.email);
+                    $('#username').val(data.username);
+                    $('#telephone').val(data.telephone);
+                    $('#adresse').val(data.adresse);
+                    $('#role').val(data.role_id);
                 },
                 error: function(){
                     const Toast = Swal.mixin({

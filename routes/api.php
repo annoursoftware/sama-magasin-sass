@@ -18,6 +18,7 @@ use App\Http\Controllers\API\MissionController;
 use App\Http\Controllers\API\PrestationController;
 use App\Http\Controllers\API\ProductionController;
 use App\Http\Controllers\API\ProduitController;
+use App\Http\Controllers\API\RecouvrementController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\SystemePaiementController;
 use App\Http\Controllers\API\UserController;
@@ -55,12 +56,15 @@ Route::apiResources([
 
     'encaissements'=> EncaissementController::class,
     'decaissements'=> DecaissementController::class,
+    'recouvrements'=> RecouvrementController::class,
 
     'systemes_paies'=> SystemePaiementController::class,
 ]);
 
 /* Dropdown */
 Route::get('json-moyens-paie', [App\Http\Controllers\API\DropdownController::class, 'mode_encaissement']);
+Route::get('json-boutiques-entreprise', [App\Http\Controllers\API\DropdownController::class, 'boutiques_dune_entreprise']);
+
 Route::get('json-infos-client', [App\Http\Controllers\API\DropdownController::class, 'infos_client']);
 Route::get('json-infos-fournisseur', [App\Http\Controllers\API\DropdownController::class, 'infos_fournisseur']);
 Route::get('json-infos-beneficiaire', [App\Http\Controllers\API\DropdownController::class, 'infos_beneficiaire']);
@@ -69,6 +73,17 @@ Route::get('json-infos-produit', [App\Http\Controllers\API\DropdownController::c
 Route::get('json-infos-activite', [App\Http\Controllers\API\DropdownController::class, 'infos_activite']);
 /* Dropdown */
 
+/* Operations ou details */
+Route::get('operations-de-achats', [App\Http\Controllers\API\AchatController::class, 'operations'])->name('operations-de-achats');
+Route::get('operations-de-production', [App\Http\Controllers\API\ProductionController::class, 'operations'])->name('operations-de-production');
+Route::get('operations-de-ventes', [App\Http\Controllers\API\VenteController::class, 'operations'])->name('operations-de-ventes');
+Route::get('operations-de-prestations', [App\Http\Controllers\API\PrestationController::class, 'operations'])->name('operations-de-prestations');
+/* Operations ou details */
+
+/* Tracking */
+Route::get('tracking-devis-des-ventes', [App\Http\Controllers\API\VenteController::class, 'tracking'])->name('tracking-devis-des-ventes');
+Route::get('tracking-devis-des-prestations', [App\Http\Controllers\API\PrestationController::class, 'tracking'])->name('tracking-devis-des-prestations');
+/* Tracking */
 
 /* Checking user */
 Route::post('check-email-users', [UserController::class, 'checkEmail'])->name('check-email-users');
@@ -77,12 +92,18 @@ Route::post('check-telephone-users', [UserController::class, 'checkTelephone'])-
 /* Checking user */
 
 /* Edition de la vente */
+Route::get('impression-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'impression_vente']);
+Route::get('impression-vente/facture/A4/{id}', [App\Http\Controllers\API\VenteController::class, 'A4'])->name('impression-vente.facture.A4');
+Route::get('impression-vente/facture/A5/{id}', [App\Http\Controllers\API\VenteController::class, 'A5'])->name('impression-vente.facture.A4');
+
 Route::post('modification-client-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'modification_client_vente']);
 Route::post('modification-etat-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'validation_etat_vente']);
 Route::post('actualisation-remise-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'actualisation_remise_vente']);
 Route::post('modification-statut-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'validation_statut_vente']);
+Route::post('annulation-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'annulation_vente']);
 
-Route::post('ajout-articles-into-details-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'ajout_articles_into_details_vente']);
+
+Route::post('ajout-articles-into-details-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'ajout_articles_into_details_vente'])->name('ajout-articles-into-details-vente');
 Route::post('annulation-article-into-details-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'annulation_article_into_details_vente']);
 Route::get('details-article-into-details-vente/{id}', [App\Http\Controllers\API\VenteController::class, 'details_article_into_details_vente']);
 
@@ -109,6 +130,7 @@ Route::post('edit-livraison-into-details-achat/{id}', [App\Http\Controllers\API\
 Route::post('modification-client-prestation/{id}', [App\Http\Controllers\API\PrestationController::class, 'modification_client_prestation']);
 Route::post('modification-etat-prestation/{id}', [App\Http\Controllers\API\PrestationController::class, 'validation_etat_prestation']);
 Route::post('modification-statut-prestation/{id}', [App\Http\Controllers\API\PrestationController::class, 'validation_statut_prestation']);
+Route::post('annulation-prestation/{id}', [App\Http\Controllers\API\PrestationController::class, 'annulation_prestation']);
 
 Route::post('ajout-activites-into-taches/{id}', [App\Http\Controllers\API\PrestationController::class, 'ajout_activites_into_taches']);
 Route::post('annulation-activite-into-taches/{id}', [App\Http\Controllers\API\PrestationController::class, 'annulation_activite_into_taches']);
@@ -142,4 +164,14 @@ Route::post('ajout-decaissement-into-details-decaissement/{id}', [App\Http\Contr
 Route::post('edit-montant-into-details-decaissement/{id}', [App\Http\Controllers\API\DecaissementController::class, 'edit_montant_into_details_decaissement'])->name('edit-montant-into-details-decaissement');
 Route::post('edit-reference-into-details-decaissement/{id}', [App\Http\Controllers\API\DecaissementController::class, 'edit_reference_into_details_decaissement'])->name('edit-reference-into-details-decaissement');
 /* Edition de l'encaissement */
+
+/* Recouvrement */
+Route::get('recouvrement/creances', [App\Http\Controllers\API\RecouvrementController::class, 'creances'])->name('recouvrement.creances');
+Route::get('recouvrement/etat/creances', [App\Http\Controllers\API\RecouvrementController::class, 'Imp_creances'])->name('recouvrement.etat.creances');
+
+Route::get('recouvrement/dettes', [App\Http\Controllers\API\RecouvrementController::class, 'dettes'])->name('recouvrement.dettes');
+Route::get('recouvrement/etat/dettes', [App\Http\Controllers\API\RecouvrementController::class, 'Imp_dettes'])->name('recouvrement.etat.dettes');
+
+Route::get('recouvrement/etat/soldes', [App\Http\Controllers\API\RecouvrementController::class, 'Imp_solde'])->name('recouvrement.etat.soldes');
+/* Recouvrement */
 /* Finances */

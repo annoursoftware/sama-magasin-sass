@@ -65,6 +65,39 @@ class AchatController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function operations(Request $request)
+    {
+        # code...
+        $query = DB::table('detail_achats as da')
+            ->join('articles as art','art.id','=','da.article_id')
+            ->join('achats as a','a.id','=','da.achat_id')
+            ->join('fournisseurs as f','f.id','=','a.fournisseur_id')
+            ->join('users as u','u.id','=','a.user_id')
+            ->join('boutiques as b','b.id','=','a.boutique_id')
+            ->join('entreprises as entrep','entrep.id','=','b.entreprise_id')
+            ->select('da.*', 'art.article', 'a.num_achat', 'a.status_achat', 'f.fournisseur', 'b.boutique', 'entrep.entreprise')
+            ->get();
+        /* dd($query); */
+        if ($request->ajax()) {    
+            return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn =  '<div class="btn-group">';
+                $btn .= '<button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>';
+                $btn .= '<div class="dropdown-menu" style="">';
+                $btn .= '<a onclick="showData('.$row->id.')" class="dropdown-item" href="#"><i class="bi bi-eye-fill"></i> Détails</a>';
+                $btn .= '</div>';
+                $btn .= '</div>';
+                
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

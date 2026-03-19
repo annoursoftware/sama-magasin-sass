@@ -10,13 +10,10 @@ class DecaissementController extends Controller
 {
     public function index() 
     {
-        $categories = DB::table('categories')->get();
-        $marques = DB::table('marques')->get();
-        $boutiques = DB::table('boutiques')->get();
-        return view('back.achats.dev', ['categories'=> $categories, 'marques'=>$marques, 'boutiques'=>$boutiques]);
+        return view('back.decaissements.dev');
     }
-    
-    public function details() 
+
+    public function details($id) 
     {
         $query_1 = DB::table('decaissements as d')
             ->join('achats as a', 'a.id', 'd.achat_id')
@@ -36,7 +33,7 @@ class DecaissementController extends Controller
                 'f.telephone',
                 'f.adresse'
             )
-            ->where('d.id', 4)
+            ->where('d.id', $id)
             ->first();
 
         $query_2 = DB::table('decaissements as d')
@@ -57,7 +54,7 @@ class DecaissementController extends Controller
                 'b.telephone',
                 'b.adresse'
             )
-            ->where('d.id', 4)
+            ->where('d.id', $id)
             ->first();
 
         if (is_null($query_1)) {
@@ -94,8 +91,8 @@ class DecaissementController extends Controller
         $decaissements = DB::table('detail_decaissements as dd')
             ->join('decaissements as d', 'd.id', 'dd.decaissement_id')
             ->join('users as u', 'u.id', 'dd.user_id')
-            ->select('dd.id', 'dd.created_at', 'dd.mode_decaissement', 'dd.ref_decaissement', 'dd.montant', 'dd.etat', 'u.name')
-            ->where('d.id', 4)
+            ->select('dd.*',/* , 'dd.created_at', 'dd.mode_decaissement', 'dd.ref_decaissement', 'dd.montant', 'dd.etat', */ 'u.name')
+            ->where('d.id', $id)
             ->get();
 
         $production = $montant_final;
@@ -107,7 +104,7 @@ class DecaissementController extends Controller
         ]);
     }
 
-    public function edition() 
+    public function edition($id) 
     {
         $query_1 = DB::table('decaissements as d')
             ->join('achats as a', 'a.id', 'd.achat_id')

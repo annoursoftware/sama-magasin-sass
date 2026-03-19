@@ -78,7 +78,7 @@
 
     <div class="container">
         <div class="image-section">
-            <img src="https://s3-eu-central-1.amazonaws.com/glossika-blog/2021/10/oladimeji-odunsi-tUUmR82pq68-unsplash.jpg"
+            <img src="{{ asset('back/connexion/img/collaboration.jpg') }}"
                 alt="African woman in headwrap">
         </div>
         <div class="login-section">

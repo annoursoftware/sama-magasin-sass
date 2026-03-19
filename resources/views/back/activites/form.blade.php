@@ -37,11 +37,6 @@
                           <input type="number" class="form-control rounded-0" name="montant" id="prix_vente" placeholder="Prix de vente" />
                         </div>
                     </div>
-                        
-                    @php
-                      $categories = DB::table('categories')->get();
-                      $boutiques = DB::table('boutiques')->get();
-                    @endphp
                     
                     <div class="col-sm-4">
                         <div class="form-group">

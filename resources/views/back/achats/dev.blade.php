@@ -49,7 +49,7 @@
 
                             <div class="info-box-content">
                                 <span class="info-box-text">Montant des achats</span>
-                                <span class="info-box-number">{{ number_format($nb_achats, 0, ",",".") }}</span>
+                                <span class="info-box-number">{{ number_format($mt_achats, 0, ",",".") }} F.CFA</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -62,7 +62,7 @@
 
                             <div class="info-box-content">
                                 <span class="info-box-text">Moyenne</span>
-                                <span class="info-box-number">{{ number_format($nb_achats, 0, ",",".") }} F.CFA</span>
+                                <span class="info-box-number">{{ number_format($moyenne_achats, 0, ",",".") }} F.CFA</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -75,7 +75,7 @@
 
                             <div class="info-box-content">
                                 <span class="info-box-text">Meilleure achat</span>
-                                <span class="info-box-number">{{ number_format($nb_achats, 0, ",",".") }} F.CFA</span>
+                                <span class="info-box-number">{{ number_format($best_buy, 0, ",",".") }} F.CFA</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -259,14 +259,14 @@
 
         
         function addForm() {
-            var url = window.location.origin+'/admin/transactions/achats/nouveau/';
+            var url = window.location.origin+'/dev/transactions/achats/nouveau/';
             window.open(url, '_self');
         }
         
         /***********************   Redirection vers la page visualisation  ******************************/
         function showData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/depenses/achats/visualisation/'+id;
+            var url = window.location.origin+'/dev/depenses/achats/visualisation/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page visualisation  ******************************/
@@ -274,7 +274,7 @@
         /***********************   Redirection vers la page edition  ******************************/
         function editData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/depenses/achats/modification/'+id;
+            var url = window.location.origin+'/dev/depenses/achats/modification/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page edition  ******************************/

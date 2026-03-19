@@ -26,7 +26,7 @@ class ArticleController extends Controller
             ->join('users as u','b.id','=','u.boutique_id')
             ->select('a.*', 'c.categorie', 'm.marque', 'b.boutique', 'u.name')
             ->get();
-
+    
         if ($request->ajax()) {    
             return DataTables::of($query)
             ->addIndexColumn()

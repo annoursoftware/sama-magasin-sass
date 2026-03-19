@@ -33,49 +33,7 @@
 @section('content')
 
     @php
-        $clients = DB::table('clients')->get();
-
-        $vente = DB::table('ventes as v')
-            ->join('clients as cli', 'cli.id', 'v.client_id')
-            ->join('users as u', 'u.id', 'v.user_id')
-            ->select(
-                'v.id',
-                'v.num_vente',
-                'v.etat',
-                'v.montant',
-                'v.remise',
-                'v.created_at',
-                'client_id',
-                'status_vente',
-                'u.name',
-                'cli.client',
-                'cli.adresse',
-                'cli.telephone',
-            )
-            ->where('v.id', /* $id */ operator: 6)
-            ->first();
-
-        $ventes = DB::table('detail_ventes as dv')
-            ->join('ventes as v', 'v.id', 'dv.vente_id')
-            ->join('articles as a', 'a.id', 'dv.article_id')
-            ->select(
-                'dv.*',
-                'a.article'
-            )
-            ->where('v.id', /* $id */ 6)
-            ->get();
-
-
-        $nbre = DB::table('detail_ventes')->where('vente_id', /* $id */ 6)->count();
-
-        $montant = DB::table('detail_ventes')->where('vente_id', /* $id */ 6)->sum(DB::raw('montant*quantite'));
-        $mt_remise = $montant * ($vente->remise / 100);
-
-        $encaissement = DB::table('ventes as v')
-            ->join('encaissements as E', 'E.vente_id', 'v.id')
-            ->join('detail_encaissements as DE', 'DE.encaissement_id', 'E.id')
-            ->where('v.id', /* $id */ 6)
-            ->sum('DE.montant');
+        
     @endphp
 
     <div class="content-wrapper">
@@ -89,7 +47,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Ventes</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.transactions.ventes') }}">Ventes</a></li>
                             <li class="breadcrumb-item active">Vente N°{{ $vente->num_vente }}</li>
                         </ol>
                     </div>
@@ -103,6 +61,7 @@
                 <div class="row">
 
                     <input type="hidden" value="{{ $vente->id }}" name="id" id="id">
+                    <input type="hidden" value="{{ $vente->status_vente }}" name="status_vente" id="status_vente">
 
                     <div class="col-lg-4 col-12">
                         <div class="row">
@@ -117,15 +76,23 @@
                                         <div class="row">
                                             <div class="col-md-12 col-sm-12 col-12">
                                                 <div class="info-box">
-                                                    <span class="info-box-icon bg-maroon"><i
-                                                            class="bi bi-cart-plus-fill"></i></span>
+                                                    <span class="info-box-icon bg-maroon"><i class="bi bi-cart-plus-fill"></i></span>
 
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Vente N° {{ $vente->num_vente }}</span>
-                                                        <span class="info-box-number text-sm">Vente
-                                                            [{{ $vente->montant == $encaissement ? ' soldée' : ' non soldée' }}
-                                                            &
-                                                            {{ $vente->etat == 1 ? 'active' : 'annulée' }}]</span>
+                                                        <span class="info-box-number text-sm">{{-- {{ $vente->status_vente=='f' ? 'Facture' : 'Devis' }} --}}
+                                                            @if ($vente->status_vente=='f')
+                                                                Facture
+                                                                [
+                                                                    {{ $vente->montant == $encaissement ? ' soldée' : ' non soldée' }}
+                                                                    &
+                                                                    {{ $vente->etat == 1 ? 'active' : 'annulée' }}
+                                                                ]
+                                                            @else
+                                                                Devis
+                                                            @endif
+                                                            
+                                                        </span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -135,8 +102,7 @@
 
                                             <div class="col-md-12 col-sm-12 col-12">
                                                 <div class="info-box">
-                                                    <span class="info-box-icon bg-maroon"><i
-                                                            class="bi bi-person"></i></span>
+                                                    <span class="info-box-icon bg-maroon"><i class="bi bi-person"></i></span>
 
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Gestionnaire</span>
@@ -150,8 +116,7 @@
 
                                             <div class="col-md-12 col-sm-12 col-12">
                                                 <div class="info-box">
-                                                    <span class="info-box-icon bg-maroon"><i
-                                                            class="bi bi-calendar3"></i></span>
+                                                    <span class="info-box-icon bg-maroon"><i class="bi bi-calendar3"></i></span>
 
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Date</span>
@@ -168,27 +133,23 @@
                                     <!-- /.card-body -->
 
                                     <div class="card-footer">
-                                        {{-- @if (Request::is('admin/*'))
-                                        <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
+                                        @if (Request::is('admin/*'))
+                                            <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
                                         @elseif (Request::is('dev/*'))
-                                        <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
+                                            <a href="{{ route('dev.transactions.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
                                         @elseif (Request::is('vendeur/*'))
-                                        <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
+                                            <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
                                         @else
-                                        <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
-                                        @endif --}}
-                                        <a href="{{ route('admin.transactions.ventes') }}"
-                                            class="btn btn-primary float-left">
-                                            <i class="fas fa-home"></i> Retour
-                                        </a>
+                                            <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                        @endif
                                     </div>
 
                                     <!-- /.card-body -->
@@ -233,48 +194,38 @@
                                             </div>
                                             <!-- /.col -->
 
-                                            {{-- <div class="col-md-4 col-sm-12 col-12">
-                                                <div class="info-box">
+                                            @if ($vente->status_vente == 'f')
+                                                <div class="col-md-6 col-sm-12 col-12">
+                                                    <div class="info-box">
 
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Produits</span>
-                                                        <span class="info-box-number text-sm">{{ $nbre }}</span>
+                                                        <div class="info-box-content">
+                                                            <span class="info-box-text">Encaissements</span>
+                                                            <span
+                                                                class="info-box-number text-sm">{{number_format(($encaissement), 0, ",", ".")}}
+                                                                FCFA</span>
+                                                        </div>
+                                                        <!-- /.info-box-content -->
                                                     </div>
-                                                    <!-- /.info-box-content -->
+                                                    <!-- /.info-box -->
                                                 </div>
-                                                <!-- /.info-box -->
-                                            </div> --}}
-                                            <!-- /.col -->
+                                                <!-- /.col -->
 
-                                            <div class="col-md-6 col-sm-12 col-12">
-                                                <div class="info-box">
+                                                <div class="col-md-6 col-sm-12 col-12">
+                                                    <div class="info-box">
 
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Encaissements</span>
-                                                        <span
-                                                            class="info-box-number text-sm">{{number_format(($encaissement), 0, ",", ".")}}
-                                                            FCFA</span>
+                                                        <div class="info-box-content">
+                                                            <span class="info-box-text">Restant</span>
+                                                            <span
+                                                                class="info-box-number text-sm">{{number_format((($montant - $mt_remise) - $encaissement), 0, ",", ".")}}
+                                                                FCFA</span>
+                                                        </div>
+                                                        <!-- /.info-box-content -->
                                                     </div>
-                                                    <!-- /.info-box-content -->
+                                                    <!-- /.info-box -->
                                                 </div>
-                                                <!-- /.info-box -->
-                                            </div>
-                                            <!-- /.col -->
-
-                                            <div class="col-md-6 col-sm-12 col-12">
-                                                <div class="info-box">
-
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Restant</span>
-                                                        <span
-                                                            class="info-box-number text-sm">{{number_format((($montant - $mt_remise) - $encaissement), 0, ",", ".")}}
-                                                            FCFA</span>
-                                                    </div>
-                                                    <!-- /.info-box-content -->
-                                                </div>
-                                                <!-- /.info-box -->
-                                            </div>
-                                            <!-- /.col -->
+                                                <!-- /.col -->
+                                            @endif
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -373,7 +324,7 @@
                                             <div class="col-sm-12">
                                                 <div class="form-group">
                                                     <label for="remise">Remise (%)</label>
-                                                    <input type="text" class="form-control rounded-0" id="remise" value="{{ $vente->remise }}" />
+                                                    <input type="number" class="form-control rounded-0" id="remise" value="{{ $vente->remise }}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -441,8 +392,7 @@
                                             
                                             <div class="col-md-12 col-12 mt-2">
                                                 <div class="table-responsive">
-                                                    <table
-                                                        class="table table-striped table-bordered table-condensed table-hover text-sm mt-1">
+                                                    <table class="table table-striped table-bordered table-condensed table-hover text-sm mt-1">
                                                         <thead style="background-color:rgb(243, 64, 118)">
                                                             <tr class="text-white">
                                                                 <th class="text-center" width="14%">#</th>
@@ -533,6 +483,14 @@
     <script src="{{ asset('back/plugins/select2/js/select2.min.js') }}"></script>
 
     <script>
+        
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 8000,
+            timerProgressBar: true,
+        });
 
         $(document).ready(function () {
             $('.select').select2({
@@ -753,6 +711,7 @@
                     $('.modal-title-show').text('Visualisation Détail Vente');
 
                     $('#dv_id').val(row.data.id);
+                    $('#dv_article').val(row.data.article);
                     $('#dv_article_id').val(row.data.article_id);
                     $('#dv_montant').val(row.data.montant);
                     $('#dv_quantite').val(row.data.quantite);
@@ -915,10 +874,7 @@
             var stock = Number($("#pstock").val());
             var montant_init = Number($("#pmontant").val());
             var montant_negocie = Number($("#pchmontant").val());
-            var remise = Number($("#remise").val());
-
-            // Initialize an empty array to store the items
-            let articleArray = [];
+            /* var remise = Number($("#remise").val()); */
 
             /* Nouvelle configuration */
             if (idproduit != "") {
@@ -961,18 +917,6 @@
                             $("#details").append(nouvelle_ligne);
                             $("#sous_total").val(total);
                             $("#a_payer").val(total);
-
-                            /* if ($.inArray(nouvelle_ligne, articleArray)===-1) {
-                                articleArray.push(nouvelle_ligne);
-
-
-                            } else {
-                                Swal.fire(
-                                    'Attention !',
-                                    "L'article déjà ajouté, manipulez le stock",
-                                    'warning'
-                                )
-                            } */
 
                         }
                     }
@@ -1057,8 +1001,6 @@
             $("#pchmontant").val(0);
             $("#pquantite").val(0);
             $("#pstock").val(0);
-
-            $("#remise").val('');
         }
 
         /********* 2.) Evaluation du total avant envoie du formulaire **************/
@@ -1079,65 +1021,19 @@
             evaluer();
             $("#sous_total").val(total);
 
-            remise = 0;
-            $("#remise").val("");
-
-            $("#total_def").html(total - (total * (remise / 100)));
-            $("#total_def_val").val(total - (total * (remise / 100)));
-
-            $("#montant_remise").html(total * (remise / 100));
+            $("#total_def").html(total);
+            $("#total_def_val").val(total);
         }
-
-        $(function () {
-            $("#remise").keyup(function () {
-                sous_total = $("#sous_total").val();
-                remise = $("#remise").val();
-
-                if (remise == "" || remise == 0) {
-                    $("#total_def").html(sous_total);
-                    $("#total_def_val").val(sous_total);
-
-                    $("#montant_remise").html(sous_total);
-                } else if (remise < 0) {
-                    Swal.fire(
-                        'Attention !',
-                        'La remise ne doit pas être négative',
-                        'danger'
-                    )
-                    $("#remise").val(0);
-                    $("#total_def").html(sous_total);
-                    $("#total_def_val").val(sous_total);
-
-                    $("#montant_remise").html(sous_total);
-                } else {
-                    $("#total_def").html(sous_total - (sous_total * (remise / 100)));
-                    $("#total_def_val").val(sous_total - (sous_total * (remise / 100)));
-
-                    $("#montant_remise").html(sous_total * (remise / 100));
-                }
-            });
-        });
     </script>
 
     <script>
-
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 8000,
-            timerProgressBar: true,
-        });
-
-        let isSubmitting = false;
-
-        var id = $("#id").val();
         
-        $('#vente').submit(function (e) {
-            alert(id)
+        let isSubmitting = false;
+        let id = $("#vente_id").val();
+        $('#formulaire').submit(function (e) {
             e.preventDefault();
-            $('#savebtn').html(' En cours...');
-
+            $('#savebtn').html(" <i class='fa-solid fa-sync fa-spin'></i>"+" En cours d'enregistrement...");
+            
             /* const $submitButton = $(this).find('button[type="submit"]');
             $submitButton.prop('disabled', true).text('Submitting...'); */
             if (isSubmitting) {
@@ -1145,10 +1041,12 @@
             }
             isSubmitting = true;
 
+            /* var url = $(this).attr("action"); */
             let formData = new FormData(this);
 
+            //var id = $('#vente_id').val();
             url = "{{ url('api/ajout-articles-into-details-vente') . '/' }}" + id,
-
+        
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -1157,29 +1055,23 @@
                 processData: false,
                 success: (response) => {
                     $('#savebtn').html('Enregistrement');
-                    /* $('#vente').trigger("reset"); */
-
-                    /* $('#vente')[0].reset();
-                    var url = window.location.origin + '/admin/transactions/ventes/';
-                    window.open(url, '_self'); */
-
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Articles enregistrés avec succès !'
-                    });
+                    $('#formulaire').trigger("reset");
+                    $('#modal-form').modal('hide');
+                    /* table.draw(); */
+                    //table.ajax.reload();
                 },
                 error: function (response) {
-                    $('#vente').find(".print-error-msg").find("ul").html('');
-                    $('#vente').find(".print-error-msg").css('display', 'block');
+                    $('#formulaire').find(".print-error-msg").find("ul").html('');
+                    $('#formulaire').find(".print-error-msg").css('display', 'block');
                     $.each(response.responseJSON.errors, function (key, value) {
-                        $('#vente').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                        $('#formulaire').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
                     });
                 },
-                complete: function () {
+                complete: function() {
                     isSubmitting = false; // Reset the flag
                 }
             });
         });
-
+        
     </script>
 @endpush

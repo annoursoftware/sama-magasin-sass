@@ -38,7 +38,7 @@
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Dépenses</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('dev.autres-depenses.depenses') }}">Dépenses</a></li>
                                 <li class="breadcrumb-item active">Dépense</li>
                             </ol>
                         </div>
@@ -133,16 +133,10 @@
                                                                                 <select id="beneficiaire" name="beneficiaire_id" class="custom-select rounded-0 select"
                                                                                     required style="width: 100%;">
                                                                                     <option value="">****** Choix ******</option>
-                                                                                    @php
-                                                                                        $beneficiaires = DB::table('beneficiaires')->get();
-
-                                                                                        $boutiques = DB::table('boutiques')->get();
-                                                                                    @endphp
-
                                                                                     @foreach ($beneficiaires as $b)
-                                                                                    <option
-                                                                                        value="{{ $b->id }}">
-                                                                                        {{ $b->beneficiaire }}</option>
+                                                                                        <option value="{{ $b->id }}">
+                                                                                        {{ $b->beneficiaire }}
+                                                                                        </option>
                                                                                     @endforeach
                                                                                 </select>
                                                                             </div>
@@ -187,7 +181,7 @@
                                                                             <div class="row">
                                                                                 <div class="col-md-12 col-sm-12 col-12 d-flex">
                                                                                     <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
-                                                                                        <i class="bi bi-plus-lg"></i> Ajouter un Bénéficiaire inexistant
+                                                                                        <i class="bi bi-plus-lg"></i> Ajouter un Bénéficiaire
                                                                                     </button>
                                                                                 </div>
                                                                             </div>

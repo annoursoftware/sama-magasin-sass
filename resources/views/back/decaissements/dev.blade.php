@@ -194,13 +194,13 @@
 
         function showData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/finances/decaissements/decaissement/visualisation/'+id;
+            var url = window.location.origin+'/dev/finances/decaissements/visualisation/'+id;
             window.open(url, '_self');
         }
         
         function editData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/finances/decaissements/decaissement/modification/'+id;
+            var url = window.location.origin+'/dev/finances/decaissements/modification/'+id;
             window.open(url, '_self');
         }
 

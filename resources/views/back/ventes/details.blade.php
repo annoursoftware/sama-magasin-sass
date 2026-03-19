@@ -33,41 +33,7 @@
 
         @php
 
-            $vente = DB::table('ventes as v')
-                ->join('clients as cli', 'cli.id', 'v.client_id')
-                ->join('users as u', 'u.id', 'v.user_id')
-                ->select(
-                    'v.id',
-                    'v.num_vente',
-                    'v.etat',
-                    'v.montant',
-                    'v.remise',
-                    'v.created_at',
-                    'u.name',
-                    'cli.client',
-                    'cli.adresse',
-                    'cli.telephone as telephone_primaire',
-                )
-                ->where('v.id', /* $id */ 4)
-                ->first();
-
-            $ventes = DB::table('detail_ventes as dv')
-                ->join('ventes as v', 'v.id', 'dv.vente_id')
-                ->join('articles as a', 'a.id', 'dv.article_id')
-                ->select('dv.*', 'a.article')
-                ->where('v.id', /* $id */ 4)
-                ->get();
-
-            $nbre = DB::table('detail_ventes')->where('vente_id', /* $id */ 4)->count();
-
-            $montant = DB::table('detail_ventes')->where('vente_id', /* $id */ 4)->sum(DB::raw('montant*quantite'));
-            $mt_remise = $montant * ($vente->remise / 100);
-
-            $encaissement = DB::table('ventes as v')
-                ->join('encaissements as E', 'E.vente_id', 'v.id')
-                ->join('detail_encaissements as DE', 'DE.encaissement_id', 'E.id')
-                ->where('v.id', /* $id */ 4)
-                ->sum('DE.montant');
+            
         @endphp
 
     <div class="content-wrapper">
@@ -81,7 +47,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Ventes</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.transactions.ventes') }}">Ventes</a></li>
                             <li class="breadcrumb-item active">Vente N°{{ $vente->num_vente }}</li>
                         </ol>
                     </div>
@@ -118,10 +84,19 @@
 
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Vente N° {{ $vente->num_vente }}</span>
-                                                        <span class="info-box-number text-sm">Vente
-                                                            [{{ $vente->montant == $encaissement ? ' soldée' : ' non soldée' }}
-                                                            &
-                                                            {{ $vente->etat == 1 ? 'active' : 'annulée' }}]</span>
+                                                        <span class="info-box-number text-sm">{{-- {{ $vente->status_vente=='f' ? 'Facture' : 'Devis' }} --}}
+                                                            @if ($vente->status_vente=='f')
+                                                                Facture
+                                                                [
+                                                                    {{ $vente->montant == $encaissement ? ' soldée' : ' non soldée' }}
+                                                                    &
+                                                                    {{ $vente->etat == 1 ? 'active' : 'annulée' }}
+                                                                ]
+                                                            @else
+                                                                Devis
+                                                            @endif
+                                                            
+                                                        </span>
                                                     </div>
                                                     <!-- /.info-box-content -->
                                                 </div>
@@ -164,27 +139,27 @@
                                     <!-- /.card-body -->
 
                                     <div class="card-footer">
-                                        {{-- @if (Request::is('admin/*'))
-                                                <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @elseif (Request::is('dev/*'))
-                                                <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @elseif (Request::is('vendeur/*'))
-                                                <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @else
-                                                <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
-                                                    <i class="fas fa-home"></i> Retour
-                                                </a>
-                                                @endif --}}
-                                        <a href="{{ route('admin.transactions.ventes') }}"
+                                        @if (Request::is('admin/*'))
+                                            <a href="{{ route('admin.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                            @elseif (Request::is('dev/*'))
+                                            <a href="{{ route('dev.transactions.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                            @elseif (Request::is('vendeur/*'))
+                                            <a href="{{ route('vendeur.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                            @else
+                                            <a href="{{ route('dev.vente.ventes') }}" class="btn btn-primary float-left">
+                                                <i class="fas fa-home"></i> Retour
+                                            </a>
+                                        @endif
+                                        {{-- <a href="{{ route('admin.transactions.ventes') }}"
                                             class="btn btn-primary float-left">
                                             <i class="fas fa-home"></i> Retour
-                                        </a>
+                                        </a> --}}
                                     </div>
 
                                     <!-- /.card-body -->
@@ -364,7 +339,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $i = 0; ?>
+                                                        <?php $i = 0; ?>
                                                     @foreach ($ventes as $v)
                                                         <?php $i++; ?>
                                                         <tr>

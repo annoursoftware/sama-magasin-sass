@@ -73,22 +73,35 @@
 
 <div class="container">
         <div class="image-section">
-            <img src="https://s3-eu-central-1.amazonaws.com/glossika-blog/2021/10/oladimeji-odunsi-tUUmR82pq68-unsplash.jpg"
-                alt="African woman in headwrap">
+            {{-- <img src="https://s3-eu-central-1.amazonaws.com/glossika-blog/2021/10/oladimeji-odunsi-tUUmR82pq68-unsplash.jpg"
+                alt="African woman in headwrap"> --}}
+            <img src="{{ asset('back/connexion/img/login.jpg') }}"
+                alt="Slogan">
         </div>
         <div class="login-section">
             <div class="login-header">
                 <h1 class="text-center"><i class="bi bi-shield-lock"></i> Connexion</h1>
             </div>
+            
+            
             <form id="login-form" method="POST" action="{{ route('login') }}" validate="true">
                 @csrf
+
+                <div class="section-error">
+                    <div class="col-12">
+                        <blockquote class="quote-danger print-error-msg" style="display:none">
+                            <ul style="color: red"></ul>
+                        </blockquote>
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <label for="username">Identifiant</label>
                     <input  
-                        type="text" id="username" name="username" placeholder="email, telephone ou identifiant" 
-                        value="{{ old('username') }}" class="@error('username') is-invalid @enderror" required autofocus />
+                        type="text" id="username" name="login" placeholder="email, telephone ou identifiant" 
+                        value="{{ old('login') }}" class="@error('login') is-invalid @enderror" required autofocus />
 
-                    @error('username')
+                    @error('login')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -109,7 +122,7 @@
                         <a href="{{ route('password.request') }}">{{ __('mot de passe oublié ?') }}</a>
                     @endif
                 </div>
-                <button type="submit" class="submit-btn">Connexion</button>
+                <button type="submit" class="submit-btn" id="login-btn">Connexion</button>
             </form>
             <div class="create-account">
                 <a href="{{ route('register') }}">Créer un compte</a>
@@ -130,3 +143,70 @@
         </div>
 </div>
 @endsection
+
+@push('script')
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        
+        let isSubmitting = false;
+        $('#login-form').submit(function (e) {
+            e.preventDefault();
+            /* $('#login-btn').prepend('<i class="bi bi-arrow-repeat"></i>'); */
+            $('#login-btn').html('<i class="fa-solid fa-sync fa-spin"></i>'+' En cours de vérification...');
+            
+            if (isSubmitting) {
+                return; // Prevent multiple submissions
+            }
+            isSubmitting = true;
+
+            let formData = new FormData(this);
+
+            url = $(this).attr('action');
+        
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: (response) => {
+                    $('#login-btn').html('Ouverture du tableau de bord...');
+                    $('#login-form').trigger("reset");
+                    setTimeout(function() {
+                        $('#login-btn').html('<i class="bi bi-check-all" style="font-size:20px"></i>'+' '+response.message);
+                    }, 500); // 2000 milliseconds = 2 seconds
+
+                    if (response.success) {
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 2000); // 2000 milliseconds = 2 seconds
+                    } else {
+                        setTimeout(function() {
+                            /* alert(response.message) */
+                            //$('#login-form').find(".print-error-msg").append('<span>' + response.message + '</span>');
+                            $('.print-error-msg ul').html('');
+                            $('.print-error-msg').show();
+                            $('.print-error-msg ul').append('<li>' + response.message + '</li>');
+                        }, 300); // 300 milliseconds = 0.3 seconds
+                    }
+                },
+                error: function (response) {
+                    $('#login-form').find(".print-error-msg").find("ul").html('');
+                    $('#login-form').find(".print-error-msg").css('display', 'block');
+                    $.each(response.responseJSON.errors, function (key, value) {
+                        $('#login-form').find(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                    });
+                    
+                    $('#login-btn').html('Connexion');
+                },
+                complete: function() {
+                    isSubmitting = false; // Reset the flag
+                }
+            });
+        });
+    </script>
+@endpush

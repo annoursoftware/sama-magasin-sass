@@ -236,7 +236,7 @@
         /***********************   Redirection vers la page visualisation  ******************************/
         function showData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/transactions/ventes/visualisation/'+id;
+            var url = window.location.origin+'/dev/productions/productions/visualisation/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page visualisation  ******************************/
@@ -244,7 +244,7 @@
         /***********************   Redirection vers la page edition  ******************************/
         function editData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/transactions/ventes/modification/'+id;
+            var url = window.location.origin+'/dev/productions/productions/modification/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page edition  ******************************/

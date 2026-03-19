@@ -27,44 +27,34 @@
                   <div class="col-sm-8 col-12">
                     <div class="card card-maroon">
                       <div class="card-header">
-                        <h3 class="card-title">Detail de la vente</h3>
+                        <h3 class="card-title">Informations Article</h3>
                       </div>
                       
                       <div class="card-body">
                         <div class="row">
                           <div class="col-md-12 col-sm-12 col-12">
                             <div class="form-group">
-                              @php
-                                $articles = DB::table('articles')->get();
-                              @endphp
                               <label for="article">Articles</label><br>
-                              <select name="article" id="dv_article_id" class="custom-select rounded-0 select" style="width: 100%;">
-                                <option value="">**** Choix ****</option>
-                
-                                @foreach ($articles as $a)
-                                  <option value="{{ $a->id }}">{{ $a->article }}</option>
-                                @endforeach
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                
-                        <div class="row">
-                          <div class="col-sm-4 col-6">
-                            <div class="form-group">
-                              <label for="dv_montant">Montant</label>
-                              <input type="text" class="form-control rounded-0" id="dv_montant" />
-                            </div>
-                          </div>
-                
-                          <div class="col-sm-4 col-6">
-                            <div class="form-group">
-                              <label for="dv_quantite">Quantite</label>
-                              <input type="number" class="form-control rounded-0" id="dv_quantite" />
+                              <input type="text" class="form-control rounded-0" id="dv_article" readonly />
+                              <input type="hidden" class="form-control rounded-0" id="dv_article_id" />
                             </div>
                           </div>
 
+                          <div class="col-sm-5 col-6">
+                            <div class="form-group">
+                              <label for="prix_vente_minimal">Prix vente minimal</label>
+                              <input type="number" class="form-control rounded-0" id="prix_vente_minimal" readonly />
+                            </div>
+                          </div>
+                
                           <div class="col-sm-4 col-6">
+                            <div class="form-group">
+                              <label for="stock">Stock</label>
+                              <input type="number" class="form-control rounded-0" id="stock" readonly />
+                            </div>
+                          </div>
+                          
+                          <div class="col-sm-3 col-6">
                             <div class="form-group">
                               <label for="dv_etat">Etat</label>
                               <input type="text" class="form-control rounded-0" id="dv_etat" readonly />
@@ -78,23 +68,22 @@
                   <div class="col-sm-4 col-12">
                     <div class="card card-maroon">
                       <div class="card-header">
-                        <h3 class="card-title">Informations Article</h3>
+                        <h3 class="card-title">Detail de la vente</h3>
                       </div>
                       
                       <div class="card-body">
-                
                         <div class="row">
-                          <div class="col-sm-12 col-7">
+                          <div class="col-sm-7 col-6">
                             <div class="form-group">
-                              <label for="prix_vente_minimal">Prix vente minimal</label>
-                              <input type="number" class="form-control rounded-0" id="prix_vente_minimal" readonly />
+                              <label for="dv_montant">Montant</label>
+                              <input type="text" class="form-control rounded-0" id="dv_montant" />
                             </div>
                           </div>
                 
-                          <div class="col-sm-12 col-5">
+                          <div class="col-sm-5 col-6">
                             <div class="form-group">
-                              <label for="stock">Stock</label>
-                              <input type="number" class="form-control rounded-0" id="stock" readonly />
+                              <label for="dv_quantite">Quantité</label>
+                              <input type="number" class="form-control rounded-0" id="dv_quantite" />
                             </div>
                           </div>
                         </div>

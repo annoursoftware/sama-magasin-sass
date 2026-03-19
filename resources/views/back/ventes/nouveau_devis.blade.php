@@ -38,7 +38,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dev.dashboard') }}">Tableau de bord</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.transactions.ventes') }}">Ventes</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dev.transactions.ventes') }}">Ventes</a></li>
                             <li class="breadcrumb-item active">Devis</li>
                         </ol>
                     </div>
@@ -118,17 +118,12 @@
                                                                     <div class="col-sm-8">
                                                                         <div class="form-group">
                                                                             <label for="client">Client</label>
-                                                                            @php
-                                                                                $clients = DB::table('clients')->get();
-                                                                            @endphp
                                                                             <select id="client" name="client_id" class="custom-select rounded-0 select"
                                                                                 required style="width: 100%;">
                                                                                 <option value="">****** Choix ******</option>
                                                                                 
                                                                                 @foreach ($clients as $cli)
-                                                                                <option
-                                                                                    value="{{ $cli->id }}">
-                                                                                    {{ $cli->client }}</option>
+                                                                                    <option value="{{ $cli->id }}">{{ $cli->client }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -181,7 +176,7 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12 col-sm-12 col-12 d-flex">
                                                                                 <button type="button" class="btn btn-flat btn-primary ml-auto" onclick="addForm()">
-                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un client inexistant
+                                                                                    <i class="bi bi-plus-lg"></i> Ajouter un client
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -192,7 +187,6 @@
                                                     </div>
                                                 </div>
 
-                                                div.d-flex justify-content-center align-items-center
                                                 <div class="row mt-3">
                                                     <div class="col-sm-12 ">
                                                         <button type="button" class="btn btn-outline-primary"
@@ -219,12 +213,8 @@
                                                                                 class="custom-select rounded-0 select"
                                                                                 style="width: 100%;">
                                                                                 <option value="">**** Choix ****</option>
-                                                                                @php
-                                                                                    $articles = DB::table('articles')->get();
-                                                                                @endphp
-    
                                                                                 @foreach ($articles as $p)
-                                                                                <option value="{{ $p->id }}">{{ $p->article }}</option>
+                                                                                    <option value="{{ $p->id }}">{{ $p->article }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -289,22 +279,18 @@
                                                                 <div class="row">
                                                                     <div class="col-sm-12">
                                                                         <div class="table-responsive">
-                                                                            <table
-                                                                                class="table table-striped table-bordered table-condensed table-hover mt-1"
-                                                                                id="details">
+                                                                            <table class="table table-striped table-bordered table-condensed table-hover mt-1" id="details">
                                                                                 <thead style="background-color:rgb(243, 64, 118)">
                                                                                     <tr class="text-white text-sm">
-                                                                                        <th class="text-center" width="3%">Options
-                                                                                        </th>
+                                                                                        <th class="text-center" width="3%">Options</th>
                                                                                         <th width="50%">Articles</th>
-                                                                                        <th class="text-center" width="15%">Montant
-                                                                                        </th>
+                                                                                        <th class="text-center" width="15%">Montant</th>
                                                                                         <th class="text-center">Quantité</th>
                                                                                         <th class="text-center">Total</th>
                                                                                     </tr>
                                                                                 </thead>
     
-                                                                                </tbody class="text-xs">
+                                                                                <tbody class="text-xs">
                                                                                 </tbody>
                                                                                 
                                                                             </table>
@@ -380,9 +366,12 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-number/2.1.6/jquery.number.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
+
+    {{-- utilisation BS-Stepper et ekko-lightbox --}}
     <script src="{{ asset('back/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
     <script src="{{ asset('back/plugins/select2/js/select2.min.js') }}"></script>
-
     <script>
         // BS-Stepper Init
         document.addEventListener('DOMContentLoaded', function () {
@@ -404,8 +393,11 @@
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
         });
+    </script>
+    {{-- utilisation BS-Stepper et ekko-lightbox --}}
 
-        
+    {{-- Recuperation des infos client et article en JSON --}}
+    <script>
         $('#client').on('change', function(e){
             console.log(e);
             var client = $('#client').val()/* e.target.value */;
@@ -442,23 +434,11 @@
                 }
             });
         });
-          
+    </script>
+    {{-- Recuperation des infos client et article en JSON --}}
 
-        /* $('#encaissement-part').hide();
-        function checkFactureDevis()
-        {
-            var type_vente = $('#type_vente').val()
-            if (type_vente=='d') {
-                $('#encaissement-part').hide();
-                alert('caché')
-            } else {
-                $('#encaissement-part').show();
-                alert('ouvert')
-            }
-        }
-        $("#type_vente").change(checkFactureDevis); */
-
-
+    {{-- Appel formulaire client --}}
+    <script>
         function addForm() {
             save_method = 'add';
             $('input[name_method]').val('POST');
@@ -468,28 +448,23 @@
             $('#id').val('');
             $('#nv_client').text(' Enregistrer');
         }
-        
     </script>
+    {{-- Appel formulaire client --}}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-number/2.1.6/jquery.number.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
 
+    {{-- Ajout d'une ligne dans le tableau des articles --}}
     <script>
-        
-        /**************** Details Facture ************************/
-        
         $(document).ready(function(){
             $("#btn_add").click(function(){
-              ajouter_une_ligne();
+                ajouter_une_ligne();
             });
         });
 
-        var cont = 0;
-        total = 0;
-        subtotal = [];
+        var cont = 0; 
+        var total = 0;
         $("#savebtn").hide();
 
-        function ajouter_une_ligne()
+        function ajouter_une_ligne_old()
         {
             var idproduit = $("#article").val();
             var produit = $("#article option:selected").text();
@@ -539,7 +514,7 @@
                             var nouvelle_ligne = '<tr class="selected" id="nouvelle_ligne'+cont+'"><td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="supprimer_ligne('+cont+');"><span class="fas fa-trash-alt" aria-hidden="true"></span></button></td> <td><input type="hidden" name="id_produit[]" value="'+idproduit+'">'+produit+' </td> <td class="text-center"><input type="hidden" class="form-control" name="montant[]" value="'+montant+'" />'+montant+'</td> <td class="text-center"><input type="hidden" class="form-control" name="quantite[]" value="'+quantite+'" />'+quantite+'</td> <td class="text-center">'+subtotal[cont]+'</td> </tr>';
                             cont++;
                             initialiser();
-                            $("#total").html(total);
+                            $("#total").html("Total/. "+total);
                             evaluer();
                             $("#details").append(nouvelle_ligne);
                             $("#sous_total").val(total);
@@ -605,7 +580,7 @@
                                 var nouvelle_ligne = '<tr class="selected" id="nouvelle_ligne'+cont+'"><td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="supprimer_ligne('+cont+');"><span class="fas fa-trash-alt" aria-hidden="true"></span></button></td> <td><input type="hidden" name="id_produit[]" value="'+idproduit+'">'+produit+' </td> <td class="text-center"><input type="hidden" class="form-control" name="montant[]" value="'+montant+'" />'+montant+'</td> <td class="text-center"><input type="hidden" class="form-control" name="quantite[]" value="'+quantite+'" />'+quantite+'</td> <td class="text-center">'+subtotal[cont]+'</td> </tr>';
                                 cont++;
                                 initialiser();
-                                $("#total").html(total);
+                                $("#total").html("Total/. "+total);
                                 evaluer();
                                 $("#details").append(nouvelle_ligne);
                                 $("#sous_total").val(total);
@@ -631,56 +606,236 @@
 
         }
 
+        function ajouter_une_ligne() {
+            var idproduit = $("#article").val();
+            var produit = $("#article option:selected").text();
+            var quantite = parseInt($("#pquantite").val()) || 0;
+            var stock = parseInt($("#pstock").val()) || 0;
+            var montant_init = parseFloat($("#pmontant").val()) || 0;
+            var montant_negocie = parseFloat($("#pchmontant").val()) || 0;
 
-        /********* 1.) Initialisation de la qte, du prix d'achat et du prix de vente à nulle **************/
-        function initialiser()
-        {
-            /* $("#pidproduit").val(""); */
+            if (idproduit != "") {
+                var ligneExistante = $("#details tbody tr").filter(function() {
+                    return $(this).find("input[name='id_produit[]']").val() == idproduit;
+                });
+
+                var montant = (montant_negocie > 0) ? montant_negocie : montant_init;
+
+                if (ligneExistante.length > 0) {
+                    // 🔄 Fusionner les quantités
+                    var ancienneQuantite = parseInt(ligneExistante.find("input[name='quantite[]']").val()) || 0;
+                    var nouvelleQuantite = ancienneQuantite + quantite;
+
+                    if (nouvelleQuantite > stock) {
+                        Swal.fire('Erreur !','La quantité totale dépasse le stock','error');
+                        return;
+                    }
+
+                    // ✅ Mettre à jour la quantité et le montant
+                    ligneExistante.find("input[name='quantite[]']").val(nouvelleQuantite);
+                    ligneExistante.find("td:eq(3)").html('<input type="hidden" class="form-control" name="quantite[]" value="'+nouvelleQuantite+'" />'+nouvelleQuantite);
+
+                    ligneExistante.find("input[name='montant[]']").val(montant);
+                    ligneExistante.find("td:eq(2)").html('<input type="hidden" class="form-control" name="montant[]" value="'+montant+'" />'+montant);
+
+                    // ✅ Recalculer le sous-total
+                    var nouveauSousTotal = montant * nouvelleQuantite;
+                    ligneExistante.find("td:eq(4)").text(nouveauSousTotal);
+
+                    // 🔄 Recalculer le total global
+                    recalculerTotal();
+
+                    // ✨ Highlight visuel
+                    ligneExistante.addClass("highlight");
+                    setTimeout(function(){ ligneExistante.removeClass("highlight"); }, 1000);
+                    // 🔊 Son spécifique pour mise à jour 
+                    playSound("pop");
+
+                    Swal.fire({ 
+                        icon: 'info', 
+                        title: "Quantité mise à jour pour l'article : " + produit, 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+                } else {
+                    // ➕ Nouvelle ligne
+                    var sousTotal = montant * quantite;
+
+                    var nouvelle_ligne = $(`
+                        <tr class="selected" id="nouvelle_ligne${cont}" style="display:none;">
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="supprimer_ligne(${cont});">
+                                    <span class="fas fa-trash-alt" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                            <td><input type="hidden" name="id_produit[]" value="${idproduit}">${produit}</td>
+                            <td class="text-center"><input type="hidden" class="form-control" name="montant[]" value="${montant}" />${montant}</td>
+                            <td class="text-center"><input type="hidden" class="form-control" name="quantite[]" value="${quantite}" />${quantite}</td>
+                            <td class="text-center">${sousTotal}</td>
+                        </tr>
+                    `);
+
+                    cont++;
+                    initialiser();
+                    $("#details tbody").append(nouvelle_ligne);
+
+                    // 🔄 recalculer le total global
+                    recalculerTotal();
+
+                    // ✨ Highlight visuel
+                    nouvelle_ligne.fadeIn(500).addClass("highlight");
+                    setTimeout(function(){ nouvelle_ligne.removeClass("highlight"); }, 1000);
+                    
+                    // 🔊 Son spécifique pour ajout
+                    playSound("ding");
+                    
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: "Nouvel article ajouté : " + produit, 
+                        toast: true, 
+                        position: 'top-end', 
+                        timer: 3000 
+                    });
+                }
+            } else {
+                Swal.fire('Attention !','Choisissez un article','warning');
+            }
+        }
+
+        function recalculerTotal() {
+            total = 0;
+            $("#details tbody tr").each(function() {
+                var montant = parseFloat($(this).find("input[name='montant[]']").val()) || 0;
+                var quantite = parseInt($(this).find("input[name='quantite[]']").val()) || 0;
+                var sousTotal = montant * quantite;
+
+                // ✅ Mettre à jour la cellule sous-total
+                $(this).find("td:eq(4)").text(sousTotal);
+
+                // ✅ Ajouter au total global
+                total += sousTotal;
+            });
+
+            // ✅ Mise à jour avec animation sur le total global
+            $("#total")
+                .hide() // on cache 
+                .html("Total/. " + total) // on met à jour 
+                .fadeIn(400) // effet fade-in
+                .addClass("pulse-total");
+            setTimeout(function(){ $("#total").removeClass("pulse-total"); }, 600);
+
+            $("#sous_total").val(total);
+            $("#a_payer").val(total);
+            evaluer();
+        }
+
+        function supprimer_ligne(index) {
+        var ligne = $("#nouvelle_ligne" + index);
+        // ✨ Highlight suppression
+        ligne.addClass("highlight-delete").fadeOut(500, function(){
+            $(this).remove();
+            recalculerTotal();
+        }); 
+        // setTimeout(function(){ ligne.remove(); recalculerTotal(); }, 500);
+
+        $("#remise").val("");
+        $("#encaissement").val(0);
+        $("#restant").val(0);
+
+        $("#total_def").html(total);
+        $("#total_def_val").val(total);
+
+        // 🔊 Son spécifique pour suppression
+        playSound("cash");
+                
+    }
+    
+        // 🎶 Fonction pour jouer différents sons 
+        function playSound(type) { 
+            let url; 
+            switch(type) { 
+                case "ding": 
+                    url = "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"; 
+                    break; 
+                case "pop": 
+                    url = "https://actions.google.com/sounds/v1/cartoon/pop.ogg"; 
+                    break; 
+                case "cash": 
+                    url = "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"; 
+                    break; 
+                default: 
+                    url = "https://actions.google.com/sounds/v1/foley/cash_register.ogg"; 
+            } 
+
+            var audio = new Audio(url); 
+            audio.volume = 0.9; // volume faible 
+            audio.play(); 
+        }
+
+        function initialiser() {
             $('#pidproduit').val("").trigger('change');
-            
             $("#pmontant").val(0);
             $("#pchmontant").val(0);
             $("#pquantite").val(0);
             $("#pstock").val(0);
-
             $("#remise").val('');
         }
 
-        /********* 2.) Evaluation du total avant envoie du formulaire **************/
-        function evaluer()
-        {
-            if(total > 0)
-            {
-                $("#savebtn").show();
-            }
-
-            else
-            {
+        function evaluer() {
+            if(total > 0) {
+                $("#savebtn").show().addClass("btn-bounce");
+                setTimeout(function(){ $("#savebtn").removeClass("btn-bounce"); }, 800);
+            } else {
                 $("#savebtn").hide();
             }
         }
 
-        function supprimer_ligne(index)
-        {
-            total = total-subtotal[index];
-            $("#total").html("S/. "+total);
-            $("#nouvelle_ligne" + index).remove();
-            evaluer();
-            $("#sous_total").val(total);
 
-            remise = 0;
-            $("#remise").val("");
+        function supprimer_ligne_old(index) {
+        total = total-subtotal[index];
+        $("#total").html("S/. "+total);
+        $("#nouvelle_ligne" + index).remove();
+        evaluer();
+        $("#sous_total").val(total);
 
-            $("#total_def").html(total-(total*(remise/100)));
-            $("#total_def_val").val(total-(total*(remise/100)));
-        }
+        remise = 0;
+        $("#remise").val("");
+        $("#encaissement").val(0);
+        $("#restant").val(0);
 
+        $("#total_def").html(total-(total*(remise/100)));
+        $("#total_def_val").val(total-(total*(remise/100)));
+    }
+
+    </script>
+    {{-- Ajout d'une ligne dans le tableau des articles --}}
+
+    {{-- Calcul de la remise --}}
+    <script>
         $(function() {
             $("#remise").keyup(function() {
-                sous_total = $("#sous_total").val();
-                remise = $("#remise").val();
+                var sous_total = parseFloat($("#sous_total").val());
+                var remise = parseFloat($("#remise").val());
                 
-                if (remise=="" || remise==0) {
+                if (isNaN(remise) || remise == "") {
+                    remise = 0;
+                }
+
+                if (remise < 0) {
+                    Swal.fire('Attention !','La remise ne doit pas être négative','error');
+                    remise = 0;
+                }
+
+                if (remise > 100) {
+                    Swal.fire('Attention !','La remise ne peut pas dépasser 100%','warning');
+                    remise = 100;
+                }
+                
+                $("#total_def").html(sous_total-(sous_total*(remise/100)));
+                $("#total_def_val").val(sous_total-(sous_total*(remise/100)));
+                
+                /* if (remise=="" || remise==0) {
                     $("#total_def").html(sous_total);
                     $("#total_def_val").val(sous_total);
                 } else if(remise<0) {
@@ -695,11 +850,14 @@
                 } else {
                     $("#total_def").html(sous_total-(sous_total*(remise/100)));
                     $("#total_def_val").val(sous_total-(sous_total*(remise/100)));
-                }
+                } */
+
             });
         });
     </script>
+    {{-- Calcul de la remise --}}
 
+    {{-- Soumission formulaire client et vente par AJAX --}}
     <script>
 
         const Toast = Swal.mixin({
@@ -760,7 +918,7 @@
         
         $('#vente').submit(function (e) {
             e.preventDefault();
-            $('#savebtn').html(' En cours...');
+            $('#savebtn').html(" <i class='fa-solid fa-sync fa-spin'></i>"+" En cours d'enregistrement...");
 
             /* const $submitButton = $(this).find('button[type="submit"]');
             $submitButton.prop('disabled', true).text('Submitting...'); */
@@ -784,9 +942,9 @@
                     $('#savebtn').html('Enregistrement');
                     /* $('#vente').trigger("reset"); */
                     $('#vente')[0].reset();
-                    var url = window.location.origin+'/admin/transactions/ventes/';
-                    window.open(url, '_self');
-                    
+                    var url2 = window.location.origin+'/dev/transactions/ventes/';
+                    window.open(url2, '_self');
+
                     Toast.fire({
                         icon: 'success',
                         title: 'Devis enregistré avec succès !'
@@ -806,4 +964,5 @@
         });
 
     </script>
+    {{-- Soumission formulaire client et vente par AJAX --}}
 @endpush

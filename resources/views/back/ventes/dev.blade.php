@@ -137,7 +137,7 @@
                                 </table>
                             </div>
                             <!-- /.card-body -->
-                            {{-- @include('back.ventes.form') --}}
+                            @include('back.ventes.impression')
                         </div>
                         <!-- /.card -->
                     </div>
@@ -266,7 +266,7 @@
         /***********************   Redirection vers la page visualisation  ******************************/
         function showData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/transactions/ventes/visualisation/'+id;
+            var url = window.location.origin+'/dev/transactions/ventes/visualisation/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page visualisation  ******************************/
@@ -274,7 +274,7 @@
         /***********************   Redirection vers la page edition  ******************************/
         function editData(id){
             //alert(id);
-            var url = window.location.origin+'/admin/transactions/ventes/modification/'+id;
+            var url = window.location.origin+'/dev/transactions/ventes/modification/'+id;
             window.open(url, '_self');
         }
         /***********************   Redirection vers la page edition  ******************************/
@@ -283,16 +283,16 @@
             alert(id);
             Swal.fire({
                 title: 'Etes vous sûr ?',
-                text: "Voulez-vous vraiment supprimer cet article ?",
+                text: "Voulez-vous vraiment annuler cette vente ?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Supprimer !'
+                confirmButtonText: 'Annuler !'
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                        url: "{{ url('api/articles') }}" + '/' + id,
+                        url: "{{ url('api/ventes') }}" + '/' + id,
                         type: "GET",
                         dataType: "JSON",
                         success: function(row){
@@ -323,16 +323,16 @@
                     var token = $("meta[name='csrf-token']").attr("content");
                     $.ajax(
                     {
-                        url : "{{ url('api/articles') . '/' }}" + id,
-                        type: 'DELETE',
+                        url : "{{ url('api/annulation-vente') . '/' }}" + id,
+                        type: 'POST',
                         data: {
                             "id": id,
                             "_token": token,
                         },
                         success: function (){
                             Swal.fire(
-                                'Suppression !',
-                                'Transaction supprimée avec succès.',
+                                'Annulation !',
+                                'Vente annulée avec succès, Ristourne générée et à régler !.',
                                 'success'
                             )
                             table.draw();
@@ -344,6 +344,53 @@
 
                 }
             })
+        }
+
+        function impression(id){
+            $.ajax({
+                url: "{{ url('api/impression-vente') }}" + "/" + id,
+                type: "GET",
+                dataType: "JSON",
+                success: function(row){
+                    $('#modal-impression').modal('show');
+                    $('.modal-title-impression').text('Choix format papier impression');
+                    /* alert(row.data.id) */
+                    $('#id-impression').val(row.data.id);
+                },
+                error: function(){
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        timerProgressBar: true,
+                        onOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Quelque chose ne va pas : (Code '+data.status+')'
+                    });
+                }
+            });
+        }
+        
+        function A4(){
+            var id_page = $('#id-impression').val();
+            alert(id_page)
+
+            var url = window.location.origin+'/api/impression-vente/facture/A4/'+id_page;
+            window.open(url, '_Blank');
+        }
+        
+        function A5(){
+            var id_page = $('#id-impression').val();
+            alert(id_page)
+            
+            var url = window.location.origin+'/api/impression-vente/facture/A5/'+id_page;
+            window.open(url, '_Blank');
         }
     </script>
 @endpush

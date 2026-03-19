@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EmployeMiddleware
@@ -15,6 +16,10 @@ class EmployeMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
+        if (Auth::check() && Auth::user()->role_id == 4) {
+            return $next($request);
+        } else {
+            return redirect()->route('login');
+        }
     }
 }

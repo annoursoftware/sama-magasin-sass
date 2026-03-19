@@ -12,6 +12,6 @@ class IngredientController extends Controller
     {
         $categories = DB::table('categories')->get();
         $boutiques = DB::table('boutiques')->get();
-        return view('back.produits.dev', ['categories'=> $categories, 'boutiques'=>$boutiques]);
+        return view('back.ingredients.dev', ['categories'=> $categories, 'boutiques'=>$boutiques]);
     }
 }
